@@ -131,6 +131,9 @@
     <None Include="pcVertex.fs" />
     <None Include="positionVertex.fs" />
   </ItemGroup>
+  <ItemGroup>
+    <Image Include="squareAlphaTexture.png" />
+  </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
   </ImportGroup>
