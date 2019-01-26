@@ -23,10 +23,16 @@
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
-    <None Include="basicVertexShader.fs">
+    <None Include="constantColorFragment.fs">
       <Filter>Source Files</Filter>
     </None>
-    <None Include="basicFragmentShader.fs">
+    <None Include="positionVertex.fs">
+      <Filter>Source Files</Filter>
+    </None>
+    <None Include="colorFragment.fs">
+      <Filter>Source Files</Filter>
+    </None>
+    <None Include="pcVertex.fs">
       <Filter>Source Files</Filter>
     </None>
   </ItemGroup>

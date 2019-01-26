@@ -126,8 +126,10 @@
     <ClCompile Include="Main.cpp" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="basicFragmentShader.fs" />
-    <None Include="basicVertexShader.fs" />
+    <None Include="colorFragment.fs" />
+    <None Include="constantColorFragment.fs" />
+    <None Include="pcVertex.fs" />
+    <None Include="positionVertex.fs" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

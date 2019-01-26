@@ -13,16 +13,18 @@ GLFWwindow * InitializeWindow();
 
 int main() {
 	GLFWwindow * window = InitializeWindow();
-	Shader shader("basicVertexShader.fs", "basicFragmentShader.fs");
-	float verts[] = { -.5f, -.5f, 0.0f, .5f, -.5f, 0.0f, 0.0f, .5f, 0.0f };
+	Shader shader("pcVertex.fs", "colorFragment.fs");
+	float verts[] = { -.5f, -.5f, 0.0f, 1.0f, 1.0f, 1.0f, .5f, -.5f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, .5f, 0.0f, .5f, .5f, .5f };
 	unsigned int VBO, VAO;
 	glGenVertexArrays(1, &VAO);
 	glGenBuffers(1, &VBO);
 	glBindVertexArray(VAO);
 	glBindBuffer(GL_ARRAY_BUFFER, VBO);
 	glBufferData(GL_ARRAY_BUFFER, sizeof(verts), verts, GL_STATIC_DRAW);
-	glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 3 * sizeof(float), (void*)0);
+	glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 6 * sizeof(float), (void*)0);
 	glEnableVertexAttribArray(0);
+	glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, 6 * sizeof(float), (void*) (sizeof(float) * 3));
+	glEnableVertexAttribArray(1);
 	while (!glfwWindowShouldClose(window)) {
 		glClearColor(.2f, .3f, .3f, 1.0f);
 		glClear(GL_COLOR_BUFFER_BIT);
