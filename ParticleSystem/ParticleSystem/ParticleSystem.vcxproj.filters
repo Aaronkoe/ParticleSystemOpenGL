@@ -35,6 +35,12 @@
     <None Include="pcVertex.fs">
       <Filter>Source Files</Filter>
     </None>
+    <None Include="pctVertex.fs">
+      <Filter>Source Files</Filter>
+    </None>
+    <None Include="caFragment.fs">
+      <Filter>Source Files</Filter>
+    </None>
   </ItemGroup>
   <ItemGroup>
     <Image Include="squareAlphaTexture.png">

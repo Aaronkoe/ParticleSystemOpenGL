@@ -128,6 +128,8 @@
   <ItemGroup>
     <None Include="colorFragment.fs" />
     <None Include="constantColorFragment.fs" />
+    <None Include="caFragment.fs" />
+    <None Include="pctVertex.fs" />
     <None Include="pcVertex.fs" />
     <None Include="positionVertex.fs" />
   </ItemGroup>
