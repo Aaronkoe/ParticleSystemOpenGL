@@ -122,8 +122,12 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="CollisionPlane.cpp" />
     <ClCompile Include="glad.c" />
     <ClCompile Include="Main.cpp" />
+    <ClCompile Include="Particle.cpp" />
+    <ClCompile Include="Quad.cpp" />
+    <ClCompile Include="Vector.cpp" />
   </ItemGroup>
   <ItemGroup>
     <None Include="colorFragment.fs" />
@@ -134,7 +138,14 @@
     <None Include="positionVertex.fs" />
   </ItemGroup>
   <ItemGroup>
+    <Image Include="pixelCircle.png" />
     <Image Include="squareAlphaTexture.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="CollisionPlane.h" />
+    <ClInclude Include="Particle.h" />
+    <ClInclude Include="Quad.h" />
+    <ClInclude Include="Vector.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
