@@ -52,11 +52,11 @@ int main() {
 	glBindBuffer(GL_ARRAY_BUFFER, 0);
 	glBindVertexArray(0);
 	ParticleContainer particleContainer(100);
-	Particle circle({ .5, .5, 0 }, { 0, .1, 0 }, { 0, 0, 0 }, 1000);
+	Particle circle({ .5, .5, 0 }, { 0, 1, 0 }, { 0, 0, 0 }, 1000);
 	particleContainer.AddParticle(circle);
 	particleContainer.UpdateTimestep(.0001);
 	while (!glfwWindowShouldClose(window)) {
-		particleContainer.UpdateTimestep(.01);
+		particleContainer.UpdateTimestep(.001);
 		glClearColor(.2f, .3f, .3f, 1.0f);
 		glClear(GL_COLOR_BUFFER_BIT);
 		// update buffers

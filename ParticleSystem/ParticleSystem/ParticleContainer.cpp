@@ -9,14 +9,15 @@ ParticleContainer::ParticleContainer(unsigned int maxPart) :
 
 void ParticleContainer::UpdateTimestep(double dt)
 {
-	float GRAVITY_CONSTANT = .5f;
+	Vector GRAVITY_VECTOR(0, -9.81, 0);
+	GRAVITY_VECTOR = GRAVITY_VECTOR.Scale(.5);
 	unsigned int numParticlesToDraw = 0;
 	for (int i = 0; i < maxParticles; ++i) {
 		// create reference for easy reading
 		Particle & particle = particleArray[i];
 		if (particle.lifeSpan > 0) {
 			// update direction then update position
-			particle.direction = (particle.direction + Vector(0, -9.81, 0)).Scale(GRAVITY_CONSTANT * dt);
+			particle.direction = (particle.direction + GRAVITY_VECTOR.Scale(dt));
 			particle.position = particle.position + particle.direction.Scale(dt);
 			particle.lifeSpan -= dt;
 			// update position array
