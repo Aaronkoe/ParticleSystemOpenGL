@@ -5,10 +5,10 @@ public:
 	Particle();
 	Particle(Vector p, Vector d, float s, Vector c);
 	void UpdateTimeStep(float dt);
-private:
+	float lifeSpan;
 	Vector position;
 	Vector direction;
 	float speed;
 	Vector color;
-	float lifeSpan;
+private:
 };
