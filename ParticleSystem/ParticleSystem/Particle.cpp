@@ -1,5 +1,9 @@
 #include "Particle.h"
 
+Particle::Particle() : lifeSpan(-1)
+{
+}
+
 Particle::Particle(Vector p, Vector d, float s, Vector c) :
 	position(p),
 	direction(d),

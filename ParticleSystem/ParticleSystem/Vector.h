@@ -1,6 +1,7 @@
 #pragma once
 #include <cmath>
 struct Vector {
+	Vector();
 	Vector(float x_, float y_, float z_);
 	Vector Dot(const Vector & rhs) const;
 	Vector Cross(const Vector & rhs) const;

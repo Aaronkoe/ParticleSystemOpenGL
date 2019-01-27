@@ -1,5 +1,9 @@
 #include "Vector.h"
 
+Vector::Vector() : x(0), y(0), z(0)
+{
+}
+
 Vector::Vector(float x_, float y_, float z_)
 {
 	x = x_;
