@@ -3,12 +3,11 @@
 class Particle {
 public:
 	Particle();
-	Particle(Vector p, Vector d, float s, Vector c);
+	Particle(Vector p, Vector d, Vector c, float life);
 	void UpdateTimeStep(float dt);
 	float lifeSpan;
 	Vector position;
 	Vector direction;
-	float speed;
 	Vector color;
 private:
 };

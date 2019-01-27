@@ -4,15 +4,15 @@ Particle::Particle() : lifeSpan(-1)
 {
 }
 
-Particle::Particle(Vector p, Vector d, float s, Vector c) :
+Particle::Particle(Vector p, Vector d, Vector c, float life) :
 	position(p),
 	direction(d),
-	color(c)
+	color(c),
+	lifeSpan(life)
 {
-	speed = s;
 }
 
 void Particle::UpdateTimeStep(float dt)
 {
-	position = position + direction.Scale(dt * speed);
+	position = position + direction.Scale(dt);
 }

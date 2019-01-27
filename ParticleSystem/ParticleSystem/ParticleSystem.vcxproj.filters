@@ -33,14 +33,11 @@
     <ClCompile Include="Particle.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="ParticleContainer.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
-    <None Include="constantColorFragment.fs">
-      <Filter>Source Files</Filter>
-    </None>
-    <None Include="positionVertex.fs">
-      <Filter>Source Files</Filter>
-    </None>
     <None Include="colorFragment.fs">
       <Filter>Source Files</Filter>
     </None>
@@ -51,6 +48,12 @@
       <Filter>Source Files</Filter>
     </None>
     <None Include="caFragment.fs">
+      <Filter>Source Files</Filter>
+    </None>
+    <None Include="pVertex.fs">
+      <Filter>Source Files</Filter>
+    </None>
+    <None Include="Fragment.fs">
       <Filter>Source Files</Filter>
     </None>
   </ItemGroup>
@@ -72,8 +75,11 @@
     <ClInclude Include="CollisionPlane.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="ParticleContainer.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
     <ClInclude Include="Particle.h">
-      <Filter>Source Files</Filter>
+      <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>
