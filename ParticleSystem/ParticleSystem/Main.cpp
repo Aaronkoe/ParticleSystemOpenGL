@@ -22,21 +22,24 @@ const unsigned int MAX_PARTICLES = 1000;
 
 int main() {
 	GLFWwindow * window = InitializeWindow();
-	Shader shader("pVertex.fs", "Fragment.fs");
+	Shader shader("centerPositionVertex.fs", "centerPositionFragment.fs");
 	unsigned int texture = GenerateTexture();
-	float verts[] = {
-		.5, -.5, 0,
+	float quad[] = {
 		-.5, -.5, 0,
-		0, .5, 0
+		.5, -.5, 0,
+		-.5, .5, 0,
+		.5, .5, 0
 	};
+	// test VAO AND VBO
 	unsigned int testVao, testVbo;
 	glGenVertexArrays(1, &testVao);
 	glGenBuffers(1, &testVbo);
 	glBindVertexArray(testVao);
 	glBindBuffer(GL_ARRAY_BUFFER, testVbo);
-	glBufferData(GL_ARRAY_BUFFER, 9 * sizeof(float), verts, GL_STATIC_DRAW);
+	glBufferData(GL_ARRAY_BUFFER, sizeof(quad), quad, GL_STATIC_DRAW);
 	glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 3 * sizeof(float), (void*)0);
 	glEnableVertexAttribArray(0);
+	// enabling blending
 	glEnable(GL_BLEND);
 	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 	// create VAO and VBO for particles
@@ -45,16 +48,25 @@ int main() {
 	glGenBuffers(1, &positionVbo);
 	glBindVertexArray(particleVao);
 	glBindBuffer(GL_ARRAY_BUFFER, positionVbo);
-								//max particles     num per position
-	glBufferData(GL_ARRAY_BUFFER, MAX_PARTICLES * sizeof(Particle) * 3, NULL, GL_STREAM_DRAW);
+								//max particles     num elements per position
+	glBufferData(GL_ARRAY_BUFFER, MAX_PARTICLES * sizeof(Particle) * 4, NULL, GL_STREAM_DRAW);
+	glVertexAttribPointer(1, 4, GL_FLOAT, GL_FALSE, 4 * sizeof(float), (void*)0);
+	// base mesh vbo
+	unsigned int baseMeshVbo;
+	glGenBuffers(1, &baseMeshVbo);
+	glBindBuffer(GL_ARRAY_BUFFER, baseMeshVbo);
+	glBufferData(GL_ARRAY_BUFFER, sizeof(quad), quad, GL_STATIC_DRAW);
 	glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 3 * sizeof(float), (void*)0);
 	glEnableVertexAttribArray(0);
+	glEnableVertexAttribArray(1);
 	glBindBuffer(GL_ARRAY_BUFFER, 0);
+	glVertexAttribDivisor(0, 0);
+	glVertexAttribDivisor(1, 1);
 	glBindVertexArray(0);
 	ParticleContainer particleContainer(100);
-	Particle circle({ .5, .5, 0 }, { 0, 1, 0 }, { 0, 0, 0 }, 1000);
+	Particle circle({ .5, .5, 0 }, { -.3, 1, 0 }, { 0, 0, 0 }, 1000);
 	particleContainer.AddParticle(circle);
-	Particle circle1({ -.5, .5, 0 }, { 0, 1, 0 }, { 0, 0, 0 }, 1000);
+	Particle circle1({ -.5, .5, 0 }, { .3, 1, 0 }, { 0, 0, 0 }, 1000);
 	particleContainer.AddParticle(circle1);
 	CollisionPlane floor(0.0f, -.5f, 0.0f, 0.0f, 1.0f, 0.0f, .5f);
 	particleContainer.AddCollidable(floor);
@@ -65,12 +77,13 @@ int main() {
 		// update buffers
 		glBindVertexArray(particleVao);
 		glBindBuffer(GL_ARRAY_BUFFER, positionVbo);
-		glBufferData(GL_ARRAY_BUFFER, MAX_PARTICLES * sizeof(Particle) * 3, NULL, GL_STREAM_DRAW);
-		glBufferSubData(GL_ARRAY_BUFFER, 0, particleContainer.GetNumParticles() * sizeof(float) * 9, particleContainer.GetPositionArray());
-		glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 3 * sizeof(float), (void*)0);
-		glEnableVertexAttribArray(0);
+		glBufferData(GL_ARRAY_BUFFER, MAX_PARTICLES * sizeof(Particle) * 4, NULL, GL_STREAM_DRAW);
+		glBufferSubData(GL_ARRAY_BUFFER, 0, particleContainer.GetNumParticles() * sizeof(float) * 4, particleContainer.GetPositionArray());
+		glVertexAttribPointer(1, 4, GL_FLOAT, GL_FALSE, 4 * sizeof(float), (void*)0);
+		glEnableVertexAttribArray(1);
 		shader.use();
-		glDrawArrays(GL_TRIANGLES, 0, particleContainer.GetNumParticles() * 3);
+		//glDrawArrays(GL_TRIANGLES, 0, particleContainer.GetNumParticles() * 3);
+		glDrawArraysInstanced(GL_TRIANGLE_STRIP, 0, 4, particleContainer.GetNumParticles());
 		glfwSwapBuffers(window);
 		glfwPollEvents();
 	}

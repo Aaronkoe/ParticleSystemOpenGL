@@ -21,15 +21,10 @@ void ParticleContainer::UpdateTimestep(double dt)
 			particle.position = particle.position + particle.direction.Scale(dt);
 			particle.lifeSpan -= dt;
 			// update position array
-			particlePositionArray[9 * numParticlesToDraw + 0] = particle.position.x;
-			particlePositionArray[9 * numParticlesToDraw + 1] = particle.position.y;
-			particlePositionArray[9 * numParticlesToDraw + 2] = particle.position.z;
-			particlePositionArray[9 * numParticlesToDraw + 3] = particle.position.x;
-			particlePositionArray[9 * numParticlesToDraw + 4] = particle.position.y - .1;
-			particlePositionArray[9 * numParticlesToDraw + 5] = particle.position.z;
-			particlePositionArray[9 * numParticlesToDraw + 6] = particle.position.x + .1;
-			particlePositionArray[9 * numParticlesToDraw + 7] = particle.position.y;
-			particlePositionArray[9 * numParticlesToDraw + 8] = particle.position.z;
+			particlePositionArray[4 * numParticlesToDraw + 0] = particle.position.x;
+			particlePositionArray[4 * numParticlesToDraw + 1] = particle.position.y;
+			particlePositionArray[4 * numParticlesToDraw + 2] = particle.position.z;
+			particlePositionArray[4 * numParticlesToDraw + 3] = .1f;
 			// check for collisions
 			CheckCollisions(particle);
 			// increment numParticles
@@ -69,7 +64,7 @@ void ParticleContainer::CheckCollisions(Particle & particle)
 {
 	for (CollisionPlane & collidable : collidables) {
 		if (collidable.isColliding(particle.position.x, particle.position.y, particle.position.z)) {
-			particle.direction = particle.direction.Scale(-1);
+			particle.direction.y = particle.direction.y * -1;
 		}
 	}
 }

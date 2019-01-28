@@ -13,6 +13,15 @@
       <UniqueIdentifier>{67DA6AB6-F800-4c08-8B7A-83BB121AAD01}</UniqueIdentifier>
       <Extensions>rc;ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe;resx;tiff;tif;png;wav;mfcribbon-ms</Extensions>
     </Filter>
+    <Filter Include="Source Files\Shaders">
+      <UniqueIdentifier>{e4702bdd-8c33-42c2-aa86-a7919e3af448}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\Shaders\Vertex">
+      <UniqueIdentifier>{6e9b160f-ac67-4221-88a4-e1c79731e0e2}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\Shaders\Fragment">
+      <UniqueIdentifier>{afe81139-f812-4805-ac4f-16909dae7c1e}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Main.cpp">
@@ -38,23 +47,29 @@
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
-    <None Include="colorFragment.fs">
-      <Filter>Source Files</Filter>
-    </None>
-    <None Include="pcVertex.fs">
-      <Filter>Source Files</Filter>
-    </None>
-    <None Include="pctVertex.fs">
-      <Filter>Source Files</Filter>
-    </None>
     <None Include="caFragment.fs">
-      <Filter>Source Files</Filter>
+      <Filter>Source Files\Shaders\Fragment</Filter>
     </None>
-    <None Include="pVertex.fs">
-      <Filter>Source Files</Filter>
+    <None Include="colorFragment.fs">
+      <Filter>Source Files\Shaders\Fragment</Filter>
     </None>
     <None Include="Fragment.fs">
-      <Filter>Source Files</Filter>
+      <Filter>Source Files\Shaders\Fragment</Filter>
+    </None>
+    <None Include="pctVertex.fs">
+      <Filter>Source Files\Shaders\Vertex</Filter>
+    </None>
+    <None Include="pcVertex.fs">
+      <Filter>Source Files\Shaders\Vertex</Filter>
+    </None>
+    <None Include="pVertex.fs">
+      <Filter>Source Files\Shaders\Vertex</Filter>
+    </None>
+    <None Include="centerPositionVertex.fs">
+      <Filter>Source Files\Shaders\Vertex</Filter>
+    </None>
+    <None Include="centerPositionFragment.fs">
+      <Filter>Source Files\Shaders\Fragment</Filter>
     </None>
   </ItemGroup>
   <ItemGroup>

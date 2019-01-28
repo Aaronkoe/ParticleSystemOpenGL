@@ -131,6 +131,8 @@
     <ClCompile Include="Vector.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <None Include="centerPositionFragment.fs" />
+    <None Include="centerPositionVertex.fs" />
     <None Include="colorFragment.fs" />
     <None Include="Fragment.fs" />
     <None Include="caFragment.fs" />
