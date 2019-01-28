@@ -54,7 +54,9 @@ int main() {
 	ParticleContainer particleContainer(100);
 	Particle circle({ .5, .5, 0 }, { 0, 1, 0 }, { 0, 0, 0 }, 1000);
 	particleContainer.AddParticle(circle);
-	particleContainer.UpdateTimestep(.0001);
+	Particle circle1({ -.5, .5, 0 }, { 0, 1, 0 }, { 0, 0, 0 }, 1000);
+	particleContainer.AddParticle(circle1);
+	particleContainer.UpdateTimestep(.00001);
 	while (!glfwWindowShouldClose(window)) {
 		particleContainer.UpdateTimestep(.001);
 		glClearColor(.2f, .3f, .3f, 1.0f);

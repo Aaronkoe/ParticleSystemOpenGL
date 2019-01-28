@@ -21,15 +21,15 @@ void ParticleContainer::UpdateTimestep(double dt)
 			particle.position = particle.position + particle.direction.Scale(dt);
 			particle.lifeSpan -= dt;
 			// update position array
-			particlePositionArray[3 * numParticlesToDraw + 0] = particle.position.x;
-			particlePositionArray[3 * numParticlesToDraw + 1] = particle.position.y;
-			particlePositionArray[3 * numParticlesToDraw + 2] = particle.position.z;
-			particlePositionArray[3 * numParticlesToDraw + 3] = particle.position.x;
-			particlePositionArray[3 * numParticlesToDraw + 4] = particle.position.y - .1;
-			particlePositionArray[3 * numParticlesToDraw + 5] = particle.position.z;
-			particlePositionArray[3 * numParticlesToDraw + 6] = particle.position.x + .1;
-			particlePositionArray[3 * numParticlesToDraw + 7] = particle.position.y;
-			particlePositionArray[3 * numParticlesToDraw + 8] = particle.position.z;
+			particlePositionArray[9 * numParticlesToDraw + 0] = particle.position.x;
+			particlePositionArray[9 * numParticlesToDraw + 1] = particle.position.y;
+			particlePositionArray[9 * numParticlesToDraw + 2] = particle.position.z;
+			particlePositionArray[9 * numParticlesToDraw + 3] = particle.position.x;
+			particlePositionArray[9 * numParticlesToDraw + 4] = particle.position.y - .1;
+			particlePositionArray[9 * numParticlesToDraw + 5] = particle.position.z;
+			particlePositionArray[9 * numParticlesToDraw + 6] = particle.position.x + .1;
+			particlePositionArray[9 * numParticlesToDraw + 7] = particle.position.y;
+			particlePositionArray[9 * numParticlesToDraw + 8] = particle.position.z;
 			// increment numParticles
 			++numParticlesToDraw;
 		}
