@@ -30,6 +30,8 @@ void ParticleContainer::UpdateTimestep(double dt)
 			particlePositionArray[9 * numParticlesToDraw + 6] = particle.position.x + .1;
 			particlePositionArray[9 * numParticlesToDraw + 7] = particle.position.y;
 			particlePositionArray[9 * numParticlesToDraw + 8] = particle.position.z;
+			// check for collisions
+			CheckCollisions(particle);
 			// increment numParticles
 			++numParticlesToDraw;
 		}
@@ -54,6 +56,20 @@ void ParticleContainer::AddParticle(Particle p)
 			lastUsedParticle = i;
 			particleArray[i] = p;
 			return;
+		}
+	}
+}
+
+void ParticleContainer::AddCollidable(CollisionPlane p)
+{
+	collidables.push_back(p);
+}
+
+void ParticleContainer::CheckCollisions(Particle & particle)
+{
+	for (CollisionPlane & collidable : collidables) {
+		if (collidable.isColliding(particle.position.x, particle.position.y, particle.position.z)) {
+			particle.direction = particle.direction.Scale(-1);
 		}
 	}
 }
