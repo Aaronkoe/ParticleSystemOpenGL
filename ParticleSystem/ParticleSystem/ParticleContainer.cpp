@@ -33,7 +33,7 @@ void ParticleContainer::UpdateTimestep(double dt)
 			particlePositionArray[4 * numParticlesToDraw + 0] = particle.position.x;
 			particlePositionArray[4 * numParticlesToDraw + 1] = particle.position.y;
 			particlePositionArray[4 * numParticlesToDraw + 2] = particle.position.z;
-			particlePositionArray[4 * numParticlesToDraw + 3] = .1f;
+			particlePositionArray[4 * numParticlesToDraw + 3] = .01f;
 			// check for collisions
 			// increment numParticles
 			++numParticlesToDraw;

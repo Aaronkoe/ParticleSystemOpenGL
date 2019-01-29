@@ -66,7 +66,7 @@ int main() {
 	glVertexAttribDivisor(0, 0);
 	glVertexAttribDivisor(1, 1);
 	glBindVertexArray(0);
-	ParticleContainer particleContainer(100, RandomParticle);
+	ParticleContainer particleContainer(100000, RandomParticle);
 	particleContainer.AddParticle(1);
 	particleContainer.AddParticle(1);
 	CollisionPlane floor(0.0f, -1.f, 0.0f, 0.0f, 1.0f, 0.0f);
@@ -82,11 +82,11 @@ int main() {
 		elapsedTime = glfwGetTime() - startTime;
 		startTime = glfwGetTime();
 		timeSinceLastBall += elapsedTime;
-		if (timeSinceLastBall > .5) {
-			particleContainer.AddParticle(1);
-			timeSinceLastBall -= .5;
+		while (timeSinceLastBall > .1) {
+			timeSinceLastBall -= .001;
+			particleContainer.AddParticle(0);
 		}
-		std::cout << "elapsed: " << elapsedTime << std::endl;
+		std::cout << "elapsed: " << elapsedTime << "\nNumParticles: " << particleContainer.GetNumParticles() << std::endl;
 		particleContainer.UpdateTimestep(elapsedTime);
 		glClearColor(.2f, .3f, .3f, 1.0f);
 		glClear(GL_COLOR_BUFFER_BIT);
