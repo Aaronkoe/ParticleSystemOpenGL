@@ -15,10 +15,13 @@
 #include "ParticleContainer.h"
 #include "Quad.h"
 
+void ProcessInput(GLFWwindow * window);
 GLFWwindow * InitializeWindow();
 unsigned int GenerateTexture();
 
 const unsigned int MAX_PARTICLES = 1000;
+
+Particle RandomParticle(double timeElapsed);
 
 int main() {
 	GLFWwindow * window = InitializeWindow();
@@ -63,15 +66,28 @@ int main() {
 	glVertexAttribDivisor(0, 0);
 	glVertexAttribDivisor(1, 1);
 	glBindVertexArray(0);
-	ParticleContainer particleContainer(100);
-	Particle circle({ .5, .5, 0 }, { -.3, 1, 0 }, { 0, 0, 0 }, 1000);
-	particleContainer.AddParticle(circle);
-	Particle circle1({ -.5, .5, 0 }, { .3, 1, 0 }, { 0, 0, 0 }, 1000);
-	particleContainer.AddParticle(circle1);
-	CollisionPlane floor(0.0f, -.5f, 0.0f, 0.0f, 1.0f, 0.0f, .5f);
+	ParticleContainer particleContainer(100, RandomParticle);
+	particleContainer.AddParticle(1);
+	particleContainer.AddParticle(1);
+	CollisionPlane floor(0.0f, -1.f, 0.0f, 0.0f, 1.0f, 0.0f);
 	particleContainer.AddCollidable(floor);
+	CollisionPlane rightWall(1.0f, -0.0f, 0.0f, -1.0f, 0.0f, 0.0f);
+	particleContainer.AddCollidable(rightWall);
+	CollisionPlane leftWall(-1.0f, 0.0f, 0.0f, 1.0f, 0.0f, 0.0f);
+	particleContainer.AddCollidable(leftWall);
+	double startTime, elapsedTime;
+	double timeSinceLastBall = 0;
+	startTime = glfwGetTime();
 	while (!glfwWindowShouldClose(window)) {
-		particleContainer.UpdateTimestep(.0001);
+		elapsedTime = glfwGetTime() - startTime;
+		startTime = glfwGetTime();
+		timeSinceLastBall += elapsedTime;
+		if (timeSinceLastBall > .5) {
+			particleContainer.AddParticle(1);
+			timeSinceLastBall -= .5;
+		}
+		std::cout << "elapsed: " << elapsedTime << std::endl;
+		particleContainer.UpdateTimestep(elapsedTime);
 		glClearColor(.2f, .3f, .3f, 1.0f);
 		glClear(GL_COLOR_BUFFER_BIT);
 		// update buffers
@@ -86,8 +102,16 @@ int main() {
 		glDrawArraysInstanced(GL_TRIANGLE_STRIP, 0, 4, particleContainer.GetNumParticles());
 		glfwSwapBuffers(window);
 		glfwPollEvents();
+		ProcessInput(window);
 	}
 	return 0;
+}
+
+void ProcessInput(GLFWwindow * window)
+{
+	if (glfwGetKey(window, GLFW_KEY_ESCAPE) == GLFW_PRESS) {
+		glfwSetWindowShouldClose(window, true);
+	}
 }
 
 GLFWwindow * InitializeWindow() {
@@ -114,4 +138,10 @@ unsigned int GenerateTexture()
 	glGenerateMipmap(GL_TEXTURE_2D);
 	stbi_image_free(data);
 	return texture;
+}
+
+Particle RandomParticle(double timeElapsed)
+{
+	float xVelocity = (float)rand() / RAND_MAX;
+	return Particle({ 0, .5, 0 }, { xVelocity, 1, 0 }, { 0, 0, 0 }, 100);
 }

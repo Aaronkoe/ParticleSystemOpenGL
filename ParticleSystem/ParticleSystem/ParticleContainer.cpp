@@ -4,7 +4,15 @@ ParticleContainer::ParticleContainer(unsigned int maxPart) :
 	maxParticles(maxPart)
 {
 	particleArray = new Particle[maxParticles];
-	particlePositionArray = new float[9 * maxParticles];
+	particlePositionArray = new float[4 * maxParticles];
+}
+
+ParticleContainer::ParticleContainer(unsigned int maxPart, Particle(*randomParticleFunc)(double)) :
+	maxParticles(maxPart)
+{
+	particleArray = new Particle[maxParticles];
+	particlePositionArray = new float[4 * maxParticles];
+	randomParticle = randomParticleFunc;
 }
 
 void ParticleContainer::UpdateTimestep(double dt)
@@ -18,6 +26,7 @@ void ParticleContainer::UpdateTimestep(double dt)
 		if (particle.lifeSpan > 0) {
 			// update direction then update position
 			particle.direction = (particle.direction + GRAVITY_VECTOR.Scale(dt));
+			CheckCollisions(particle);
 			particle.position = particle.position + particle.direction.Scale(dt);
 			particle.lifeSpan -= dt;
 			// update position array
@@ -26,7 +35,6 @@ void ParticleContainer::UpdateTimestep(double dt)
 			particlePositionArray[4 * numParticlesToDraw + 2] = particle.position.z;
 			particlePositionArray[4 * numParticlesToDraw + 3] = .1f;
 			// check for collisions
-			CheckCollisions(particle);
 			// increment numParticles
 			++numParticlesToDraw;
 		}
@@ -35,6 +43,12 @@ void ParticleContainer::UpdateTimestep(double dt)
 		}
 	}
 	particlesCount = numParticlesToDraw;
+}
+
+void ParticleContainer::AddParticle(double timeElapsed)
+{
+	Particle newParticle = randomParticle(timeElapsed);
+	AddParticle(newParticle);
 }
 
 void ParticleContainer::AddParticle(Particle p)
@@ -63,8 +77,9 @@ void ParticleContainer::AddCollidable(CollisionPlane p)
 void ParticleContainer::CheckCollisions(Particle & particle)
 {
 	for (CollisionPlane & collidable : collidables) {
-		if (collidable.isColliding(particle.position.x, particle.position.y, particle.position.z)) {
-			particle.direction.y = particle.direction.y * -1;
+		if (collidable.isColliding(particle)) {
+			particle.direction = particle.direction - collidable.GetNormal().Scale(2 * (particle.direction.Dot(collidable.GetNormal())));
+			//particle.direction = particle.direction.Scale(particle.elasticity);
 		}
 	}
 }

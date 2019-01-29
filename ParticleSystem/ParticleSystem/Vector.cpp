@@ -11,9 +11,9 @@ Vector::Vector(float x_, float y_, float z_)
 	z = z_;
 }
 
-Vector Vector::Dot(const Vector & rhs) const
+float Vector::Dot(const Vector & rhs) const
 {
-	return Vector(x * rhs.x, y * rhs.y, z * rhs.z);
+	return x * rhs.x + y * rhs.y + z * rhs.z;
 }
 
 Vector Vector::Cross(const Vector & rhs) const

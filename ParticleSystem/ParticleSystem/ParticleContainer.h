@@ -6,11 +6,12 @@
 class ParticleContainer {
 public:
 	ParticleContainer(unsigned int maxPart);
+	ParticleContainer(unsigned int maxPart, Particle(*randomParticleFunc)(double));
 	void UpdateTimestep(double dt);
 	float * GetPositionArray() { return particlePositionArray; }
 
-	//debug functions
 	unsigned int GetNumParticles() { return particlesCount; }
+	void AddParticle(double timeElapsed);
 	void AddParticle(Particle p);
 	void AddCollidable(CollisionPlane p);
 private:
@@ -23,4 +24,5 @@ private:
 	float * particlePositionArray;
 
 	void CheckCollisions(Particle & particle);
+	Particle(*randomParticle)(double) = NULL;
 };
