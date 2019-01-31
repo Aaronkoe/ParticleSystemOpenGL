@@ -1,7 +1,6 @@
 ﻿#include "sphere.h"
 
 #include <GLFW/glfw3.h>
-#include <glad/glad.h>
 #include <vector>
 #include <iostream>
 #include <glm/gtc/matrix_inverse.hpp>

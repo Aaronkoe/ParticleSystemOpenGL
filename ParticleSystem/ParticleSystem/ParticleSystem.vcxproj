@@ -128,7 +128,6 @@
     <ClCompile Include="Particle.cpp" />
     <ClCompile Include="ParticleContainer.cpp" />
     <ClCompile Include="Quad.cpp" />
-    <ClCompile Include="Sphere.cpp" />
     <ClCompile Include="Vector.cpp" />
   </ItemGroup>
   <ItemGroup>
@@ -140,8 +139,6 @@
     <None Include="pctVertex.fs" />
     <None Include="pcVertex.fs" />
     <None Include="pVertex.fs" />
-    <None Include="sphereShader.frag" />
-    <None Include="sphereShader.vert" />
   </ItemGroup>
   <ItemGroup>
     <Image Include="pixelCircle.png" />
@@ -152,7 +149,6 @@
     <ClInclude Include="Particle.h" />
     <ClInclude Include="ParticleContainer.h" />
     <ClInclude Include="Quad.h" />
-    <ClInclude Include="sphere.h" />
     <ClInclude Include="SphereFuncs.h" />
     <ClInclude Include="Vector.h" />
   </ItemGroup>

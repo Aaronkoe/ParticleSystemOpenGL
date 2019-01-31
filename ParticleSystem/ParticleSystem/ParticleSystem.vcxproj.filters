@@ -45,9 +45,6 @@
     <ClCompile Include="ParticleContainer.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="Sphere.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <None Include="caFragment.fs">
@@ -72,12 +69,6 @@
       <Filter>Source Files\Shaders\Vertex</Filter>
     </None>
     <None Include="centerPositionFragment.fs">
-      <Filter>Source Files\Shaders\Fragment</Filter>
-    </None>
-    <None Include="sphereShader.vert">
-      <Filter>Source Files\Shaders\Vertex</Filter>
-    </None>
-    <None Include="sphereShader.frag">
       <Filter>Source Files\Shaders\Fragment</Filter>
     </None>
   </ItemGroup>
@@ -106,9 +97,6 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="SphereFuncs.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="sphere.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>
