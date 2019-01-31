@@ -19,7 +19,7 @@ void ProcessInput(GLFWwindow * window);
 GLFWwindow * InitializeWindow();
 unsigned int GenerateTexture();
 
-const unsigned int MAX_PARTICLES = 1000;
+const unsigned int MAX_PARTICLES = 100000;
 
 Particle RandomParticle(double timeElapsed);
 
@@ -66,7 +66,7 @@ int main() {
 	glVertexAttribDivisor(0, 0);
 	glVertexAttribDivisor(1, 1);
 	glBindVertexArray(0);
-	ParticleContainer particleContainer(100000, RandomParticle);
+	ParticleContainer particleContainer(MAX_PARTICLES, RandomParticle);
 	particleContainer.AddParticle(1);
 	particleContainer.AddParticle(1);
 	CollisionPlane floor(0.0f, -1.f, 0.0f, 0.0f, 1.0f, 0.0f);
@@ -83,7 +83,7 @@ int main() {
 		startTime = glfwGetTime();
 		timeSinceLastBall += elapsedTime;
 		while (timeSinceLastBall > .1) {
-			timeSinceLastBall -= .001;
+			timeSinceLastBall -= .005;
 			particleContainer.AddParticle(0);
 		}
 		std::cout << "elapsed: " << elapsedTime << "\nNumParticles: " << particleContainer.GetNumParticles() << std::endl;
