@@ -86,7 +86,7 @@ int main() {
 			timeSinceLastBall -= .005;
 			particleContainer.AddParticle(0);
 		}
-		std::cout << "elapsed: " << elapsedTime << "\nNumParticles: " << particleContainer.GetNumParticles() << std::endl;
+		std::cout << "elapsed: " << elapsedTime << std::endl;
 		particleContainer.UpdateTimestep(elapsedTime);
 		glClearColor(.2f, .3f, .3f, 1.0f);
 		glClear(GL_COLOR_BUFFER_BIT);
