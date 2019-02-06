@@ -57,6 +57,7 @@ void mouse_callback(GLFWwindow* window, double xpos, double ypos)
 
 
 int main() {
+	camera.MovementSpeed = .1;
 	GLFWwindow * window = InitializeWindow(SCR_WIDTH, SCR_HEIGHT);
 	Shader shader("pvmCenterPositionVertex.fs", "centerPositionFragment.fs");
 	unsigned int texture = GenerateTexture();
