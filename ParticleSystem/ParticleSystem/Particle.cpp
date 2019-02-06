@@ -4,25 +4,32 @@ Particle::Particle() : lifeSpan(-1)
 {
 }
 
-Particle::Particle(Vector p, Vector d, Vector c, float life) :
+Particle::Particle(glm::vec3 p, glm::vec3 vel, glm::vec4 c, float life, float s) :
 	position(p),
-	direction(d),
+	velocity(vel),
 	color(c),
-	lifeSpan(life)
+	lifeSpan(life),
+	size(s)
 {
 	elasticity = .5;
 }
 
-Particle::Particle(Vector p, Vector d, Vector c, float life, float e) :
+Particle::Particle(glm::vec3 p, glm::vec3 vel, glm::vec4 c, float life, float e, float s) :
 	position(p),
-	direction(d),
+	velocity(vel),
 	color(c),
 	lifeSpan(life),
-	elasticity(e)
+	elasticity(e),
+	size(s)
 {
+}
+
+bool Particle::operator<(Particle & rhs)
+{
+	return cameraDistance > rhs.cameraDistance;
 }
 
 void Particle::UpdateTimeStep(float dt)
 {
-	position = position + direction.Scale(dt);
+	position = position + velocity * dt;
 }

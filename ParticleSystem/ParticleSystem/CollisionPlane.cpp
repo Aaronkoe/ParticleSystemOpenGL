@@ -9,7 +9,7 @@ CollisionPlane::CollisionPlane(float p1, float p2, float p3, float n1, float n2,
 
 bool CollisionPlane::isColliding(Particle & p)
 {
-	Vector inBetween(p.position.x - point.x, p.position.y - point.y, p.position.z - point.z);
-	float check = inBetween.Dot(normal);
-	return check < 0 && p.direction.Dot(normal) < 0;
+	glm::vec3 inBetween(p.position.x - point.x, p.position.y - point.y, p.position.z - point.z);
+	float check = glm::dot(inBetween, normal);
+	return check < 0 && glm::dot(p.velocity, normal) < 0;
 }

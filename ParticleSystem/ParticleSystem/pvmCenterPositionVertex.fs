@@ -2,6 +2,7 @@
 
 layout (location = 0) in vec3 baseMesh;
 layout (location = 1) in vec4 centerPositionAndSize;
+layout (location = 2) in vec4 color;
 
 uniform mat4 projection;
 uniform mat4 view;

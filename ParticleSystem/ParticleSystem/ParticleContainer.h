@@ -1,15 +1,26 @@
 #pragma once
+#include <algorithm>
 #include <vector>
+#include <glad/glad.h>
+#include <glm/glm.hpp>
+#include <learnopengl/shader.h>
 #include "CollisionPlane.h"
 #include "Particle.h"
 
 class ParticleContainer {
 public:
+	unsigned int VAO, baseVbo, posVbo, colorVbo;
+	Shader * shader = NULL;
+
 	ParticleContainer(unsigned int maxPart);
 	ParticleContainer(unsigned int maxPart, Particle(*randomParticleFunc)(double));
-	void UpdateTimestep(double dt);
+	void InitializeVAO();
+	void UpdateBuffers();
+	void Draw(glm::mat4 view, glm::mat4 proj);
+	void SetShader(Shader * s) { shader = s; }
+	void UpdateTimestep(glm::vec3 cameraPosition, float dt);
 	float * GetPositionArray() { return particlePositionArray; }
-
+	float * GetColorArray() { return particleColorArray; }
 	unsigned int GetNumParticles() { return particlesCount; }
 	void AddParticle(double timeElapsed);
 	void AddParticle(Particle p);
@@ -22,7 +33,13 @@ private:
 	unsigned int particlesCount = 0;
 	Particle * particleArray;
 	float * particlePositionArray;
+	float * particleColorArray;
 
+	void SortParticles();
+	int FindUnusedParticle();
 	void CheckCollisions(Particle & particle);
 	Particle(*randomParticle)(double) = NULL;
+
+	static float quadVerts[12];
 };
+

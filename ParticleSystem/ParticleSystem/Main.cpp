@@ -20,8 +20,10 @@
 #include "Quad.h"
 #include "CollisionCube.h"
 
+bool pause = false;
+
 const int SCR_WIDTH = 800, SCR_HEIGHT = 800;
-const unsigned int MAX_PARTICLES = 100000;
+const unsigned int MAX_PARTICLES = 1000;
 
 // function declarations
 void ProcessInput(GLFWwindow * window);
@@ -112,6 +114,8 @@ int main() {
 	glm::mat4 proj(1.0);
 	glm::mat4 view(1.0);
 	glm::mat4 model(1.0);
+	particleContainer.SetShader(&shader);
+	particleContainer.InitializeVAO();
 	while (!glfwWindowShouldClose(window)) {
 		glClearColor(.2f, .3f, .3f, 1.0f);
 		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
@@ -120,41 +124,48 @@ int main() {
 		floorq.Draw(view, proj);
 		//cube.Draw(view, proj);
 		shader.use();
-		elapsedTime = glfwGetTime() - startTime;
+		if (!pause) {
+			elapsedTime = glfwGetTime() - startTime;
+		}
 		startTime = glfwGetTime();
-		timeSinceLastBall += elapsedTime;
-		while (timeSinceLastBall > .5) {
-			timeSinceLastBall -= .5;
-			particleContainer.AddParticle(0);
+		if (!pause) {
+			timeSinceLastBall += elapsedTime;
+			while (timeSinceLastBall > .5) {
+				timeSinceLastBall -= .5;
+				particleContainer.AddParticle(0);
+			}
 		}
 		shader.setMat4("projection", proj);
 		shader.setMat4("view", view);
 		shader.setMat4("model", model);
-
-		//std::cout << "elapsed: " << elapsedTime << " numParticles: " << particleContainer.GetNumParticles() << std::endl;
-		particleContainer.UpdateTimestep(elapsedTime);
+		std::cout << "elapsed: " << elapsedTime << " numParticles: " << particleContainer.GetNumParticles() << std::endl;
+		if (!pause) particleContainer.UpdateTimestep(camera.Position, elapsedTime);
 		// update buffers
-		glBindVertexArray(particleVao);
-		glBindBuffer(GL_ARRAY_BUFFER, positionVbo);
-		glBufferData(GL_ARRAY_BUFFER, MAX_PARTICLES * sizeof(float) * 4, NULL, GL_STREAM_DRAW);
-		glBufferSubData(GL_ARRAY_BUFFER, 0, particleContainer.GetNumParticles() * sizeof(float) * 4, particleContainer.GetPositionArray());
-		glVertexAttribPointer(1, 4, GL_FLOAT, GL_FALSE, 4 * sizeof(float), (void*)0);
 		//glBindVertexArray(SphereVao);
 		//glDrawArrays(GL_TRIANGLES, 0, sphereSize);
 		//glDrawArrays(GL_TRIANGLES, 0, particleContainer.GetNumParticles() * 3);
-		glDrawArraysInstanced(GL_TRIANGLE_STRIP, 0, 4, particleContainer.GetNumParticles());
+		if (!pause) {
+			particleContainer.UpdateBuffers();
+		}
+		particleContainer.Draw(view, proj);
 		glfwSwapBuffers(window);
 		glfwPollEvents();
 		ProcessInput(window);
 	}
 	return 0;
 }
-
+bool pNotHeld = false;
 void ProcessInput(GLFWwindow * window)
 {
 	float deltaTime = .1;
 	if (glfwGetKey(window, GLFW_KEY_ESCAPE) == GLFW_PRESS) {
 		glfwSetWindowShouldClose(window, true);
+	}
+	if (glfwGetKey(window, GLFW_KEY_P) == GLFW_PRESS && pNotHeld) {
+		pause = !pause; pNotHeld = false;
+	}
+	if (!pNotHeld && glfwGetKey(window, GLFW_KEY_P) == GLFW_RELEASE) {
+		pNotHeld = true;
 	}
 	if (glfwGetKey(window, GLFW_KEY_W) == GLFW_PRESS)
 		camera.ProcessKeyboard(FORWARD, deltaTime);
@@ -266,7 +277,7 @@ Particle RandomParticle(double timeElapsed)
 	float xVelocity = (float)rand() / RAND_MAX;
 	float zVelocity = -(float)rand() / RAND_MAX;
 	if (rand() % 2 == 1) { xVelocity = -xVelocity; }
-	return Particle({ 0, .5, 0 }, { xVelocity, 1, zVelocity }, { 0, 0, 0 }, 100);
+	return Particle({ 0, .5, 0 } , { xVelocity, 1, zVelocity }, { 0, 0, 0, 0 }, 100, .1);
 }
 
 // Handle moving camera with mouse movement from learnopengl.com
