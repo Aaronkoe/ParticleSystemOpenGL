@@ -142,6 +142,7 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="CollisionCube.cpp" />
     <ClCompile Include="CollisionPlane.cpp" />
     <ClCompile Include="glad.c" />
     <ClCompile Include="Main.cpp" />
@@ -167,7 +168,10 @@
     <Image Include="squareAlphaTexture.png" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="Collidable.h" />
+    <ClInclude Include="CollisionCube.h" />
     <ClInclude Include="CollisionPlane.h" />
+    <ClInclude Include="Drawable.h" />
     <ClInclude Include="Particle.h" />
     <ClInclude Include="ParticleContainer.h" />
     <ClInclude Include="Quad.h" />

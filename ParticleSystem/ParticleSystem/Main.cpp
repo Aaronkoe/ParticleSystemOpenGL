@@ -18,6 +18,7 @@
 #include "Particle.h"
 #include "ParticleContainer.h"
 #include "Quad.h"
+#include "CollisionCube.h"
 
 const int SCR_WIDTH = 800, SCR_HEIGHT = 800;
 const unsigned int MAX_PARTICLES = 100000;
@@ -37,13 +38,14 @@ float lastY = (float)SCR_HEIGHT / 2.0;
 bool firstMouse = true;
 
 int main() {
-	Quad quadtest;
+	Quad floorq, leftWallq, rightWallq, backWallq;
 	camera.MovementSpeed = .1;
 	GLFWwindow * window = InitializeWindow(SCR_WIDTH, SCR_HEIGHT);
 	Shader shader("pvmCenterPositionVertex.fs", "centerPositionFragment.fs");
 	Shader quadShader("quadVertex.fs", "colorFragment.fs");
 	GLenum err;
-	quadtest.SetShader(&quadShader);
+	//CollisionCube cube({ 0, 0, -5 }, { 1, -1, -6 }, &quadShader);
+	Quad::SetShader(&quadShader);
 	unsigned int texture = GenerateTexture();
 	float quad[] = {
 		-.5, -.5, 0,
@@ -94,10 +96,14 @@ int main() {
 	particleContainer.AddParticle(1);
 	CollisionPlane floor(0.0f, -1.f, 0.0f, 0.0f, 1.0f, 0.0f);
 	particleContainer.AddCollidable(floor);
+	floorq.SetTranslation({ 0, -1, 0 });
+	floorq.SetRotation({ 3.14159/2, 0, 0 });
 	CollisionPlane rightWall(1.0f, -0.0f, 0.0f, -1.0f, 0.0f, 0.0f);
 	particleContainer.AddCollidable(rightWall);
 	CollisionPlane leftWall(-1.0f, 0.0f, 0.0f, 1.0f, 0.0f, 0.0f);
 	particleContainer.AddCollidable(leftWall);
+	CollisionPlane backWall(0, 0, -5, 0, 0, 1);
+	particleContainer.AddCollidable(backWall);
 	double startTime, elapsedTime;
 	double timeSinceLastBall = 0;
 	int sphereSize;
@@ -106,13 +112,13 @@ int main() {
 	glm::mat4 proj(1.0);
 	glm::mat4 view(1.0);
 	glm::mat4 model(1.0);
-	quadtest.SetTranslation({ 0, 0, -3 });
 	while (!glfwWindowShouldClose(window)) {
 		glClearColor(.2f, .3f, .3f, 1.0f);
 		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 		proj = glm::perspective(glm::radians(camera.Zoom), (float)SCR_WIDTH / (float)SCR_HEIGHT, 0.1f, 100.0f);
 		view = camera.GetViewMatrix();
-		quadtest.Draw(view, proj);
+		floorq.Draw(view, proj);
+		//cube.Draw(view, proj);
 		shader.use();
 		elapsedTime = glfwGetTime() - startTime;
 		startTime = glfwGetTime();
