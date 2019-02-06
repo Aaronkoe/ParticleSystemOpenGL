@@ -33,7 +33,7 @@ void ParticleContainer::UpdateTimestep(double dt)
 			particlePositionArray[4 * numParticlesToDraw + 0] = particle.position.x;
 			particlePositionArray[4 * numParticlesToDraw + 1] = particle.position.y;
 			particlePositionArray[4 * numParticlesToDraw + 2] = particle.position.z;
-			particlePositionArray[4 * numParticlesToDraw + 3] = .01f;
+			particlePositionArray[4 * numParticlesToDraw + 3] = .1f;
 			// check for collisions
 			// increment numParticles
 			++numParticlesToDraw;
@@ -80,6 +80,7 @@ void ParticleContainer::CheckCollisions(Particle & particle)
 		if (collidable.isColliding(particle)) {
 			particle.direction = particle.direction - collidable.GetNormal().Scale(2 * (particle.direction.Dot(collidable.GetNormal())));
 			//particle.direction = particle.direction.Scale(particle.elasticity);
+			particle.direction = particle.direction.Scale(.95);
 		}
 	}
 }

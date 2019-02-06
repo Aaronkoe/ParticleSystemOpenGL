@@ -71,6 +71,9 @@
     <None Include="centerPositionFragment.fs">
       <Filter>Source Files\Shaders\Fragment</Filter>
     </None>
+    <None Include="pvmCenterPositionVertex.fs">
+      <Filter>Source Files\Shaders\Vertex</Filter>
+    </None>
   </ItemGroup>
   <ItemGroup>
     <Image Include="squareAlphaTexture.png">
