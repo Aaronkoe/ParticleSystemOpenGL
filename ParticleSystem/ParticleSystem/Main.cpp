@@ -9,7 +9,6 @@
 #include <glm/gtc/matrix_transform.hpp>
 #include <glm/gtc/type_ptr.hpp>
 
-
 //personal
 #define STB_IMAGE_IMPLEMENTATION
 #include <stb_image.h>
@@ -21,45 +20,30 @@
 #include "Quad.h"
 
 const int SCR_WIDTH = 800, SCR_HEIGHT = 800;
+const unsigned int MAX_PARTICLES = 100000;
 
+// function declarations
 void ProcessInput(GLFWwindow * window);
 GLFWwindow * InitializeWindow(int w, int h);
 unsigned int GenerateTexture();
 unsigned int GenerateSphereVao(float radius, int resolution, int & sphereVertSize);
 void mouse_callback(GLFWwindow * window, double xpos, double ypos);
-const unsigned int MAX_PARTICLES = 100000;
-
 Particle RandomParticle(double timeElapsed);
 
+// camera global variables
 Camera camera(glm::vec3(0.0f, 0.0f, 3.0f), { 0, 1, 0 }, 270, 0);
 float lastX = (float)SCR_WIDTH / 2.0;
 float lastY = (float)SCR_HEIGHT / 2.0;
 bool firstMouse = true;
 
-// Handle moving camera with mouse movement from learnopengl.com
-void mouse_callback(GLFWwindow* window, double xpos, double ypos)
-{
-	if (firstMouse)
-	{
-		lastX = xpos;
-		lastY = ypos;
-		firstMouse = false;
-	}
-
-	float xoffset = xpos - lastX;
-	float yoffset = lastY - ypos; // reversed since y-coordinates go from bottom to top
-
-	lastX = xpos;
-	lastY = ypos;
-
-	camera.ProcessMouseMovement(xoffset, yoffset);
-}
-
-
 int main() {
+	Quad quadtest;
 	camera.MovementSpeed = .1;
 	GLFWwindow * window = InitializeWindow(SCR_WIDTH, SCR_HEIGHT);
 	Shader shader("pvmCenterPositionVertex.fs", "centerPositionFragment.fs");
+	Shader quadShader("quadVertex.fs", "colorFragment.fs");
+	GLenum err;
+	quadtest.SetShader(&quadShader);
 	unsigned int texture = GenerateTexture();
 	float quad[] = {
 		-.5, -.5, 0,
@@ -67,18 +51,19 @@ int main() {
 		-.5, .5, 0,
 		.5, .5, 0
 	};
-	// test VAO AND VBO
-	unsigned int testVao, testVbo;
-	glGenVertexArrays(1, &testVao);
-	glGenBuffers(1, &testVbo);
+	//// test VAO AND VBO
+	//unsigned int testVao, testVbo;
+	//glGenVertexArrays(1, &testVao);
+	//glGenBuffers(1, &testVbo);
 	//glBindVertexArray(testVao);
-	glBindBuffer(GL_ARRAY_BUFFER, testVbo);
-	glBufferData(GL_ARRAY_BUFFER, sizeof(quad), quad, GL_STATIC_DRAW);
-	glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 3 * sizeof(float), (void*)0);
-	glEnableVertexAttribArray(0);
+	//glBindBuffer(GL_ARRAY_BUFFER, testVbo);
+	//glBufferData(GL_ARRAY_BUFFER, sizeof(quad), quad, GL_STATIC_DRAW);
+	//glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 3 * sizeof(float), (void*)0);
+	//glEnableVertexAttribArray(0);
 	// enabling blending
 	glEnable(GL_BLEND);
 	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+	glEnable(GL_DEPTH_TEST);
 	// create VAO and VBO for particles
 	unsigned int particleVao, positionVbo;
 	glGenVertexArrays(1, &particleVao);
@@ -100,6 +85,10 @@ int main() {
 	glVertexAttribDivisor(0, 0);
 	glVertexAttribDivisor(1, 1);
 	glBindVertexArray(0);
+	while ((err = glGetError()) != GL_NO_ERROR) {
+		std::cout << "error in initialize quad vao" << err << std::endl;
+	}
+
 	ParticleContainer particleContainer(MAX_PARTICLES, RandomParticle);
 	particleContainer.AddParticle(1);
 	particleContainer.AddParticle(1);
@@ -117,10 +106,14 @@ int main() {
 	glm::mat4 proj(1.0);
 	glm::mat4 view(1.0);
 	glm::mat4 model(1.0);
+	quadtest.SetTranslation({ 0, 0, -3 });
 	while (!glfwWindowShouldClose(window)) {
-		shader.use();
+		glClearColor(.2f, .3f, .3f, 1.0f);
+		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 		proj = glm::perspective(glm::radians(camera.Zoom), (float)SCR_WIDTH / (float)SCR_HEIGHT, 0.1f, 100.0f);
 		view = camera.GetViewMatrix();
+		quadtest.Draw(view, proj);
+		shader.use();
 		elapsedTime = glfwGetTime() - startTime;
 		startTime = glfwGetTime();
 		timeSinceLastBall += elapsedTime;
@@ -134,15 +127,12 @@ int main() {
 
 		//std::cout << "elapsed: " << elapsedTime << " numParticles: " << particleContainer.GetNumParticles() << std::endl;
 		particleContainer.UpdateTimestep(elapsedTime);
-		glClearColor(.2f, .3f, .3f, 1.0f);
-		glClear(GL_COLOR_BUFFER_BIT);
 		// update buffers
 		glBindVertexArray(particleVao);
 		glBindBuffer(GL_ARRAY_BUFFER, positionVbo);
 		glBufferData(GL_ARRAY_BUFFER, MAX_PARTICLES * sizeof(float) * 4, NULL, GL_STREAM_DRAW);
 		glBufferSubData(GL_ARRAY_BUFFER, 0, particleContainer.GetNumParticles() * sizeof(float) * 4, particleContainer.GetPositionArray());
 		glVertexAttribPointer(1, 4, GL_FLOAT, GL_FALSE, 4 * sizeof(float), (void*)0);
-		glEnableVertexAttribArray(1);
 		//glBindVertexArray(SphereVao);
 		//glDrawArrays(GL_TRIANGLES, 0, sphereSize);
 		//glDrawArrays(GL_TRIANGLES, 0, particleContainer.GetNumParticles() * 3);
@@ -271,4 +261,23 @@ Particle RandomParticle(double timeElapsed)
 	float zVelocity = -(float)rand() / RAND_MAX;
 	if (rand() % 2 == 1) { xVelocity = -xVelocity; }
 	return Particle({ 0, .5, 0 }, { xVelocity, 1, zVelocity }, { 0, 0, 0 }, 100);
+}
+
+// Handle moving camera with mouse movement from learnopengl.com
+void mouse_callback(GLFWwindow* window, double xpos, double ypos)
+{
+	if (firstMouse)
+	{
+		lastX = xpos;
+		lastY = ypos;
+		firstMouse = false;
+	}
+
+	float xoffset = xpos - lastX;
+	float yoffset = lastY - ypos; // reversed since y-coordinates go from bottom to top
+
+	lastX = xpos;
+	lastY = ypos;
+
+	camera.ProcessMouseMovement(xoffset, yoffset);
 }

@@ -160,6 +160,7 @@
     <None Include="pcVertex.fs" />
     <None Include="pVertex.fs" />
     <None Include="pvmCenterPositionVertex.fs" />
+    <None Include="quadVertex.fs" />
   </ItemGroup>
   <ItemGroup>
     <Image Include="pixelCircle.png" />

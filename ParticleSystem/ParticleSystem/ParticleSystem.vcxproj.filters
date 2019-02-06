@@ -74,6 +74,9 @@
     <None Include="pvmCenterPositionVertex.fs">
       <Filter>Source Files\Shaders\Vertex</Filter>
     </None>
+    <None Include="quadVertex.fs">
+      <Filter>Source Files\Shaders\Vertex</Filter>
+    </None>
   </ItemGroup>
   <ItemGroup>
     <Image Include="squareAlphaTexture.png">
