@@ -154,9 +154,7 @@ void ParticleContainer::CheckCollisions(Particle & particle)
 {
 	for (CollisionPlane & collidable : collidables) {
 		if (collidable.isColliding(particle)) {
-			particle.velocity = particle.velocity - collidable.GetNormal() * 2.0f * glm::dot(particle.velocity, collidable.GetNormal());
-			//particle.velocity = particle.velocity.Scale(particle.elasticity);
-			particle.velocity = particle.velocity * particle.elasticity;
+			particle.velocity = particle.velocity - collidable.GetNormal() * (1 + particle.elasticity) * glm::dot(particle.velocity, collidable.GetNormal());
 		}
 	}
 }

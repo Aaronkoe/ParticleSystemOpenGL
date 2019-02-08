@@ -39,6 +39,8 @@ float lastY = (float)SCR_HEIGHT / 2.0;
 bool firstMouse = true;
 
 int main() {
+	Quad triangle({ -.2, -.2, -.2 }, { .6, 0, -.2 }, { .6, 0, .6 });
+	CollisionPlane trianglep({ -.2, -.2, -.2 }, { .6, 0, .6 }, { .6, 0, -.2 });
 	Quad floorq, leftWallq, rightWallq, backWallq;
 	camera.MovementSpeed = .1;
 	GLFWwindow * window = InitializeWindow(SCR_WIDTH, SCR_HEIGHT);
@@ -100,13 +102,13 @@ int main() {
 	floorq.SetTranslation({ 0, -1, 0 });
 	floorq.SetRotation({ 3.14159/2, 0, 0 });
 	floorq.SetScale({ 10, 10, 10 });
-	CollisionPlane diagonal(.2f, -.3, .2, -.2, .9, -.2);
-	Quad dQuad;
-	dQuad.SetTranslation({ .2, -.3, .2 });
-	dQuad.SetRotation({ 1, 0, 0 });
-	dQuad.SetScale({ 3, 3, 3 });
-	
-	particleContainer.AddCollidable(diagonal);
+	//CollisionPlane diagonal(.2f, -.3, .2, -.2, .9, -.2);
+	//Quad dQuad;
+	//dQuad.SetTranslation({ .2, -.3, .2 });
+	//dQuad.SetRotation({ 1, 0, 0 });
+	//dQuad.SetScale({ 3, 3, 3 });
+	//particleContainer.AddCollidable(diagonal);
+	particleContainer.AddCollidable(trianglep);
 	//CollisionPlane rightWall(1.0f, -0.0f, 0.0f, -1.0f, 0.0f, 0.0f);
 	//particleContainer.AddCollidable(rightWall);
 	//CollisionPlane leftWall(-1.0f, 0.0f, 0.0f, 1.0f, 0.0f, 0.0f);
@@ -128,7 +130,8 @@ int main() {
 		proj = glm::perspective(glm::radians(camera.Zoom), (float)SCR_WIDTH / (float)SCR_HEIGHT, 0.1f, 100.0f);
 		view = camera.GetViewMatrix();
 		//floorq.Draw(view, proj);
-		dQuad.Draw(view, proj);
+		//dQuad.Draw(view, proj);
+		triangle.Draw(view, proj);
 		if (!pause) {
 			elapsedTime = glfwGetTime() - startTime;
 		}
