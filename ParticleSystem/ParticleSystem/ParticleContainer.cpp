@@ -65,7 +65,7 @@ void ParticleContainer::UpdateTimestep(glm::vec3 cameraPosition, float dt)
 {
 	SortParticles();
 	glm::vec3 GRAVITY_VECTOR(0, -9.81, 0);
-	GRAVITY_VECTOR = GRAVITY_VECTOR * .5f;
+	GRAVITY_VECTOR = GRAVITY_VECTOR * .2f;
 	unsigned int numParticlesToDraw = 0;
 	for (int i = 0; i < maxParticles; ++i) {
 		// create reference for easy reading
@@ -156,7 +156,7 @@ void ParticleContainer::CheckCollisions(Particle & particle)
 		if (collidable.isColliding(particle)) {
 			particle.velocity = particle.velocity - collidable.GetNormal() * 2.0f * glm::dot(particle.velocity, collidable.GetNormal());
 			//particle.velocity = particle.velocity.Scale(particle.elasticity);
-			particle.velocity = particle.velocity * .95f;
+			particle.velocity = particle.velocity * particle.elasticity;
 		}
 	}
 }

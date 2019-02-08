@@ -15,6 +15,7 @@ public:
 	static void SetShader(Shader * s) { shader = s; }
 	static void SetDefaultTexture(GLuint t) { defaultTexture = t; }
 	void SetTexture(int t) { texture = t; }
+	void SetColor(glm::vec3 c) { color = c; }
 
 	glm::vec3 translation{ 0.0f, 0.0f, 0.0f };
 private:
@@ -28,6 +29,7 @@ private:
 	int texture{ -1 };
 	glm::vec3 rotation{ 0.0f, 0.0f, 0.0f };
 	glm::vec3 scale{ 1.0f, 1.0f, 1.0f };
+	glm::vec3 color{ 1, 1, 1 };
 
 	void InitializeVao();
 };

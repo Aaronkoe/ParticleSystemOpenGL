@@ -20,16 +20,15 @@
 #include "Quad.h"
 #include "CollisionCube.h"
 
-bool pause = false;
+bool pause = true;
 
 const int SCR_WIDTH = 800, SCR_HEIGHT = 800;
-const unsigned int MAX_PARTICLES = 1000;
+const unsigned int MAX_PARTICLES = 100000;
 
 // function declarations
 void ProcessInput(GLFWwindow * window);
 GLFWwindow * InitializeWindow(int w, int h);
 unsigned int GenerateTexture();
-unsigned int GenerateSphereVao(float radius, int resolution, int & sphereVertSize);
 void mouse_callback(GLFWwindow * window, double xpos, double ypos);
 Particle RandomParticle(double timeElapsed);
 
@@ -100,16 +99,23 @@ int main() {
 	particleContainer.AddCollidable(floor);
 	floorq.SetTranslation({ 0, -1, 0 });
 	floorq.SetRotation({ 3.14159/2, 0, 0 });
-	CollisionPlane rightWall(1.0f, -0.0f, 0.0f, -1.0f, 0.0f, 0.0f);
-	particleContainer.AddCollidable(rightWall);
-	CollisionPlane leftWall(-1.0f, 0.0f, 0.0f, 1.0f, 0.0f, 0.0f);
-	particleContainer.AddCollidable(leftWall);
-	CollisionPlane backWall(0, 0, -5, 0, 0, 1);
-	particleContainer.AddCollidable(backWall);
+	floorq.SetScale({ 10, 10, 10 });
+	CollisionPlane diagonal(.2f, -.3, .2, -.2, .9, -.2);
+	Quad dQuad;
+	dQuad.SetTranslation({ .2, -.3, .2 });
+	dQuad.SetRotation({ 1, 0, 0 });
+	dQuad.SetScale({ 3, 3, 3 });
+	
+	particleContainer.AddCollidable(diagonal);
+	//CollisionPlane rightWall(1.0f, -0.0f, 0.0f, -1.0f, 0.0f, 0.0f);
+	//particleContainer.AddCollidable(rightWall);
+	//CollisionPlane leftWall(-1.0f, 0.0f, 0.0f, 1.0f, 0.0f, 0.0f);
+	//particleContainer.AddCollidable(leftWall);
+	//CollisionPlane backWall(0, 0, -5, 0, 0, 1);
+	//particleContainer.AddCollidable(backWall);
 	double startTime, elapsedTime;
 	double timeSinceLastBall = 0;
 	int sphereSize;
-	unsigned int SphereVao = GenerateSphereVao(1, 10, sphereSize);
 	startTime = glfwGetTime();
 	glm::mat4 proj(1.0);
 	glm::mat4 view(1.0);
@@ -117,36 +123,29 @@ int main() {
 	particleContainer.SetShader(&shader);
 	particleContainer.InitializeVAO();
 	while (!glfwWindowShouldClose(window)) {
-		glClearColor(.2f, .3f, .3f, 1.0f);
+		glClearColor(.1f, .1f, .1f, 1.0f);
 		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 		proj = glm::perspective(glm::radians(camera.Zoom), (float)SCR_WIDTH / (float)SCR_HEIGHT, 0.1f, 100.0f);
 		view = camera.GetViewMatrix();
-		floorq.Draw(view, proj);
-		//cube.Draw(view, proj);
-		shader.use();
+		//floorq.Draw(view, proj);
+		dQuad.Draw(view, proj);
 		if (!pause) {
 			elapsedTime = glfwGetTime() - startTime;
+		}
+		else {
+			elapsedTime = 0;
 		}
 		startTime = glfwGetTime();
 		if (!pause) {
 			timeSinceLastBall += elapsedTime;
-			while (timeSinceLastBall > .5) {
-				timeSinceLastBall -= .5;
+			while (timeSinceLastBall > .00002) {
+				timeSinceLastBall -= .00002;
 				particleContainer.AddParticle(0);
 			}
 		}
-		shader.setMat4("projection", proj);
-		shader.setMat4("view", view);
-		shader.setMat4("model", model);
 		std::cout << "elapsed: " << elapsedTime << " numParticles: " << particleContainer.GetNumParticles() << std::endl;
-		if (!pause) particleContainer.UpdateTimestep(camera.Position, elapsedTime);
-		// update buffers
-		//glBindVertexArray(SphereVao);
-		//glDrawArrays(GL_TRIANGLES, 0, sphereSize);
-		//glDrawArrays(GL_TRIANGLES, 0, particleContainer.GetNumParticles() * 3);
-		if (!pause) {
-			particleContainer.UpdateBuffers();
-		}
+		particleContainer.UpdateTimestep(camera.Position, elapsedTime);
+		particleContainer.UpdateBuffers();
 		particleContainer.Draw(view, proj);
 		glfwSwapBuffers(window);
 		glfwPollEvents();
@@ -175,6 +174,10 @@ void ProcessInput(GLFWwindow * window)
 		camera.ProcessKeyboard(LEFT, deltaTime);
 	if (glfwGetKey(window, GLFW_KEY_D) == GLFW_PRESS)
 		camera.ProcessKeyboard(RIGHT, deltaTime);
+
+	if (glfwGetKey(window, GLFW_KEY_X) == GLFW_PRESS) {
+		std::cout << camera.Position.x << " " << camera.Position.y << " " << camera.Position.z << std::endl;
+	}
 }
 
 GLFWwindow * InitializeWindow(int w, int h) {
@@ -205,79 +208,31 @@ unsigned int GenerateTexture()
 	return texture;
 }
 
-unsigned int GenerateSphereVao(float Radius, int Resolution, int & sphereVertSize)
-{
-	double PI = 3.14159;
-	std::vector<float> v;
-	// iniatiate the variable we are going to use
-	float X1, Y1, X2, Y2, Z1, Z2;
-	float inc1, inc2, inc3, inc4, inc5, Radius1, Radius2;
-
-	for (int w = 0; w < Resolution; w++) {
-		for (int h = (-Resolution / 2); h < (Resolution / 2); h++) {
-
-
-			inc1 = (w / (float)Resolution) * 2 * PI;
-			inc2 = ((w + 1) / (float)Resolution) * 2 * PI;
-
-			inc3 = (h / (float)Resolution)*PI;
-			inc4 = ((h + 1) / (float)Resolution)*PI;
-
-
-			X1 = sin(inc1);
-			Y1 = cos(inc1);
-			X2 = sin(inc2);
-			Y2 = cos(inc2);
-
-			// store the upper and lower radius, remember everything is going to be drawn as triangles
-			Radius1 = Radius * cos(inc3);
-			Radius2 = Radius * cos(inc4);
-
-
-
-
-			Z1 = Radius * sin(inc3);
-			Z2 = Radius * sin(inc4);
-
-			// insert the triangle coordinates
-			v.push_back(glm::vec3(Radius1*X1, Z1, Radius1*Y1).x);
-			v.push_back(glm::vec3(Radius1*X1, Z1, Radius1*Y1).y);
-			v.push_back(glm::vec3(Radius1*X1, Z1, Radius1*Y1).z);
-			v.push_back(glm::vec3(Radius1*X2, Z1, Radius1*Y2).x);
-			v.push_back(glm::vec3(Radius1*X2, Z1, Radius1*Y2).y);
-			v.push_back(glm::vec3(Radius1*X2, Z1, Radius1*Y2).z);
-			v.push_back(glm::vec3(Radius2*X2, Z2, Radius2*Y2).x);
-			v.push_back(glm::vec3(Radius2*X2, Z2, Radius2*Y2).y);
-			v.push_back(glm::vec3(Radius2*X2, Z2, Radius2*Y2).z);
-			v.push_back(glm::vec3(Radius1*X1, Z1, Radius1*Y1).x);
-			v.push_back(glm::vec3(Radius1*X1, Z1, Radius1*Y1).y);
-			v.push_back(glm::vec3(Radius1*X1, Z1, Radius1*Y1).z);
-			v.push_back(glm::vec3(Radius2*X2, Z2, Radius2*Y2).x);
-			v.push_back(glm::vec3(Radius2*X2, Z2, Radius2*Y2).y);
-			v.push_back(glm::vec3(Radius2*X2, Z2, Radius2*Y2).z);
-			v.push_back(glm::vec3(Radius2*X1, Z2, Radius2*Y1).x);
-			v.push_back(glm::vec3(Radius2*X1, Z2, Radius2*Y1).y);
-			v.push_back(glm::vec3(Radius2*X1, Z2, Radius2*Y1).z);
-		}
-	}
-	unsigned int indexVbo, sphereVao;
-	glGenBuffers(1, &indexVbo);
-	glGenVertexArrays(1, &sphereVao);
-	glBindVertexArray(sphereVao);
-	glBindBuffer(GL_ARRAY_BUFFER, indexVbo);
-	glBufferData(GL_ARRAY_BUFFER, v.size() * sizeof(float), &v[0], GL_STATIC_DRAW); // this might not work
-	glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 3 * sizeof(float), (void*)0);
-	glEnableVertexAttribArray(0);
-	sphereVertSize = v.size();
-	return 0;
-}
-
 Particle RandomParticle(double timeElapsed)
 {
-	float xVelocity = (float)rand() / RAND_MAX;
-	float zVelocity = -(float)rand() / RAND_MAX;
-	if (rand() % 2 == 1) { xVelocity = -xVelocity; }
-	return Particle({ 0, .5, 0 } , { xVelocity, 1, zVelocity }, { 0, 0, 0, 0 }, 100, .1);
+	float xVelocity = (float)rand() / (RAND_MAX / 2);
+	xVelocity = xVelocity / 10 + .2;
+	float yVelocity = (float)rand() / (RAND_MAX / 2);
+	yVelocity = yVelocity / 10 + .7;
+	float zVelocity = -(float)rand() / (RAND_MAX / 2);
+	zVelocity = zVelocity / 10 + .2;
+	float rVal = float(rand()) / RAND_MAX;
+	rVal = rVal / 100 + .1;
+	float gVal = float(rand()) / RAND_MAX;
+	gVal = gVal / 100 + .1;
+	float bVal = 1; // float(rand()) / RAND_MAX;
+	float aVal = float(rand()) / RAND_MAX;
+	aVal = 1;// aVal / 10 + .8;
+	float size = (float)rand() / RAND_MAX;
+	size += 1;
+	size /= 500;
+	float elast = (float)rand() / RAND_MAX;
+	elast = elast / 10 + .3;
+	float shouldBeWhite = rand() % 100;
+	if (shouldBeWhite == 0) {
+		//return Particle({ 0, .2, 0 }, { xVelocity, yVelocity, zVelocity }, { .9, .9, .9, aVal }, 1.2, elast, size);
+	}
+	return Particle({ 0, .2, 0 } , { xVelocity, yVelocity, zVelocity }, { rVal, gVal, bVal, aVal }, 1.8, elast, size);
 }
 
 // Handle moving camera with mouse movement from learnopengl.com
