@@ -23,7 +23,7 @@
 bool pause = true;
 
 const int SCR_WIDTH = 800, SCR_HEIGHT = 800;
-const unsigned int MAX_PARTICLES = 100000;
+const unsigned int MAX_PARTICLES = 120000;
 
 // function declarations
 void ProcessInput(GLFWwindow * window);
@@ -39,15 +39,12 @@ float lastY = (float)SCR_HEIGHT / 2.0;
 bool firstMouse = true;
 
 int main() {
-	Quad triangle({ -.2, -.2, -.2 }, { .6, 0, -.2 }, { .6, 0, .6 }, { -.2, -.2, .6 });
-	CollisionPlane trianglep({ -.2, -.2, -.2 }, { .6, 0, .6 }, { .6, 0, -.2 });
-	Quad floorq, leftWallq, rightWallq, backWallq;
+	// set up stuff
 	camera.MovementSpeed = .1;
 	GLFWwindow * window = InitializeWindow(SCR_WIDTH, SCR_HEIGHT);
 	Shader shader("pvmCenterPositionVertex.fs", "centerPositionFragment.fs");
 	Shader quadShader("quadVertex.fs", "colorFragment.fs");
 	GLenum err;
-	//CollisionCube cube({ 0, 0, -5 }, { 1, -1, -6 }, &quadShader);
 	Quad::SetShader(&quadShader);
 	unsigned int texture = GenerateTexture();
 	float quad[] = {
@@ -56,28 +53,10 @@ int main() {
 		-.5, .5, 0,
 		.5, .5, 0
 	};
-	//// test VAO AND VBO
-	//unsigned int testVao, testVbo;
-	//glGenVertexArrays(1, &testVao);
-	//glGenBuffers(1, &testVbo);
-	//glBindVertexArray(testVao);
-	//glBindBuffer(GL_ARRAY_BUFFER, testVbo);
-	//glBufferData(GL_ARRAY_BUFFER, sizeof(quad), quad, GL_STATIC_DRAW);
-	//glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 3 * sizeof(float), (void*)0);
-	//glEnableVertexAttribArray(0);
 	// enabling blending
 	glEnable(GL_BLEND);
 	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 	glEnable(GL_DEPTH_TEST);
-	// create VAO and VBO for particles
-	unsigned int particleVao, positionVbo;
-	glGenVertexArrays(1, &particleVao);
-	glGenBuffers(1, &positionVbo);
-	glBindVertexArray(particleVao);
-	glBindBuffer(GL_ARRAY_BUFFER, positionVbo);
-								//max particles     num elements per position
-	glBufferData(GL_ARRAY_BUFFER, MAX_PARTICLES * sizeof(Particle) * 4, NULL, GL_STREAM_DRAW);
-	glVertexAttribPointer(1, 4, GL_FLOAT, GL_FALSE, 4 * sizeof(float), (void*)0);
 	// base mesh vbo
 	unsigned int baseMeshVbo;
 	glGenBuffers(1, &baseMeshVbo);
@@ -95,26 +74,6 @@ int main() {
 	}
 
 	ParticleContainer particleContainer(MAX_PARTICLES, RandomParticle);
-	particleContainer.AddParticle(1);
-	particleContainer.AddParticle(1);
-	CollisionPlane floor(0.0f, -1.f, 0.0f, 0.0f, 1.0f, 0.0f);
-	particleContainer.AddCollidable(floor);
-	floorq.SetTranslation({ 0, -1, 0 });
-	floorq.SetRotation({ 3.14159/2, 0, 0 });
-	floorq.SetScale({ 10, 10, 10 });
-	//CollisionPlane diagonal(.2f, -.3, .2, -.2, .9, -.2);
-	//Quad dQuad;
-	//dQuad.SetTranslation({ .2, -.3, .2 });
-	//dQuad.SetRotation({ 1, 0, 0 });
-	//dQuad.SetScale({ 3, 3, 3 });
-	//particleContainer.AddCollidable(diagonal);
-	particleContainer.AddCollidable(trianglep);
-	//CollisionPlane rightWall(1.0f, -0.0f, 0.0f, -1.0f, 0.0f, 0.0f);
-	//particleContainer.AddCollidable(rightWall);
-	//CollisionPlane leftWall(-1.0f, 0.0f, 0.0f, 1.0f, 0.0f, 0.0f);
-	//particleContainer.AddCollidable(leftWall);
-	//CollisionPlane backWall(0, 0, -5, 0, 0, 1);
-	//particleContainer.AddCollidable(backWall);
 	double startTime, elapsedTime;
 	double timeSinceLastBall = 0;
 	int sphereSize;
@@ -129,9 +88,6 @@ int main() {
 		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 		proj = glm::perspective(glm::radians(camera.Zoom), (float)SCR_WIDTH / (float)SCR_HEIGHT, 0.1f, 100.0f);
 		view = camera.GetViewMatrix();
-		//floorq.Draw(view, proj);
-		//dQuad.Draw(view, proj);
-		triangle.Draw(view, proj);
 		if (!pause) {
 			elapsedTime = glfwGetTime() - startTime;
 		}
@@ -141,8 +97,8 @@ int main() {
 		startTime = glfwGetTime();
 		if (!pause) {
 			timeSinceLastBall += elapsedTime;
-			while (timeSinceLastBall > .00005) {
-				timeSinceLastBall -= .00005;
+			while (timeSinceLastBall > .00002) {
+				timeSinceLastBall -= .00002;
 				particleContainer.AddParticle(0);
 			}
 		}
@@ -214,33 +170,16 @@ unsigned int GenerateTexture()
 #define PI 3.14159f
 Particle RandomParticle(double timeElapsed)
 {
-	float xVelocity = (float)rand() / (RAND_MAX / 2);
-	xVelocity = xVelocity / 10 + .2;
-	float yVelocity = (float)rand() / (RAND_MAX / 2);
-	yVelocity = yVelocity / 10 + .7;
-	float zVelocity = -(float)rand() / (RAND_MAX / 2);
-	zVelocity = zVelocity / 10 + .2;
+	float xVelocity = (float)rand() / (RAND_MAX / 5);
+	float yVelocity = (float)rand() / (RAND_MAX / 5);
+	float zVelocity = (float)rand() / (RAND_MAX / 5);
+	if (rand() % 2 == 0) xVelocity *= -1;
+	if (rand() % 2 == 0) zVelocity *= -1;
 	float rVal = float(rand()) / RAND_MAX;
-	rVal = rVal / 100 + .1;
 	float gVal = float(rand()) / RAND_MAX;
-	gVal = gVal / 100 + .1;
-	float bVal = 1; // float(rand()) / RAND_MAX;
+	float bVal = float(rand()) / RAND_MAX;
 	float aVal = float(rand()) / RAND_MAX;
-	aVal = 1;// aVal / 10 + .8;
-	float size = (float)rand() / RAND_MAX;
-	size += 1;
-	size /= 500;
-	float elast = (float)rand() / RAND_MAX;
-	elast = elast / 10 + .3;
-	bool shouldBeWhite = false;
-	//circle sampling
-	//float t = 2 * PI * (float)rand() / RAND_MAX;
-	//float u = (float)rand() / RAND_MAX + (float)rand() / RAND_MAX;
-	//float r = u > 1 ? 2 - u : u;
-	//float xVelocity = r * cos(t);
-	//float zVelocity = r * sin(t);
-	
-	return Particle({ 0, .2, 0 } , { xVelocity, yVelocity, zVelocity }, { rVal, gVal, bVal, aVal }, 1.8, elast, size);
+	return Particle({ 0, .2, 0 } , { xVelocity, yVelocity, zVelocity }, { rVal, gVal, bVal, aVal }, 2.1, 0, .01);
 }
 
 // Handle moving camera with mouse movement from learnopengl.com
