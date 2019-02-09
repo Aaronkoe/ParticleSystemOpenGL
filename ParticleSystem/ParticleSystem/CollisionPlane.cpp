@@ -23,3 +23,13 @@ bool CollisionPlane::isColliding(Particle & p)
 		return true;
 	}
 }
+
+void CollisionPlane::HandleCollision(Particle & p)
+{
+	glm::vec3 inBetween = p.position - point;
+	//glm::vec3 inBetween = point - p.position;
+	if (glm::dot(inBetween, normal) < 0) {
+		p.position -= normal * glm::dot(inBetween, normal) / (glm::length(inBetween) * glm::length(inBetween));
+		p.velocity = p.velocity - normal * (1 + p.elasticity) * glm::dot(p.velocity, normal);
+	}
+}

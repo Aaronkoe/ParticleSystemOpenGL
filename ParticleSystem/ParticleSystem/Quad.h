@@ -9,7 +9,7 @@
 class Quad {
 public:
 	Quad() = default;
-	Quad(glm::vec3 c1, glm::vec3 c2, glm::vec3 c3);
+	Quad(glm::vec3 c1, glm::vec3 c2, glm::vec3 c3, glm::vec3 c4);
 	void Draw(glm::mat4 view, glm::mat4 proj);
 	void SetRotation(glm::vec3 v) { rotation = v; }
 	void SetTranslation(glm::vec3 v) { translation = v; }
@@ -27,7 +27,7 @@ private:
 	static const GLfloat normals[18];
 	static GLuint defaultTexture;
 	static bool initialized;
-	bool usesThreeCorners = false;
+	bool usesCorners = false;
 	unsigned int privateVao, privateVbo;
 	bool privateInit = false;
 
@@ -35,9 +35,9 @@ private:
 	glm::vec3 rotation{ 0.0f, 0.0f, 0.0f };
 	glm::vec3 scale{ 1.0f, 1.0f, 1.0f };
 	glm::vec3 color{ 1, 1, 1 };
-	glm::vec3 corner1, corner2, corner3;
+	glm::vec3 corner1, corner2, corner3, corner4;
 
-	void DrawWithThreeCorners(glm::mat4 view, glm::mat4 proj);
+	void DrawWithCorners(glm::mat4 view, glm::mat4 proj);
 	void InitializeVao();
 	void PrivateInit();
 };

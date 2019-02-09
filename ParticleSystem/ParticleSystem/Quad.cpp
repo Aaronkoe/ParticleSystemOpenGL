@@ -6,17 +6,18 @@ GLuint Quad::VAO = 0;
 GLuint Quad::defaultTexture = -1;
 
 
-Quad::Quad(glm::vec3 c1, glm::vec3 c2, glm::vec3 c3) :
-	corner1(c1), corner2(c2), corner3(c3)
+Quad::Quad(glm::vec3 c1, glm::vec3 c2, glm::vec3 c3, glm::vec3 c4) :
+	corner1(c1), corner2(c2), corner3(c3), corner4(c4)
 {
-	usesThreeCorners = true;
+	usesCorners = true;
 }
+
 
 void Quad::Draw(glm::mat4 view, glm::mat4 proj)
 {
 	GLenum err;
-	if (usesThreeCorners) {
-		DrawWithThreeCorners(view, proj);
+	if (usesCorners) {
+		DrawWithCorners(view, proj);
 		return;
 	}
 	if (initialized)
@@ -47,7 +48,7 @@ void Quad::Draw(glm::mat4 view, glm::mat4 proj)
 	}
 }
 
-void Quad::DrawWithThreeCorners(glm::mat4 view, glm::mat4 proj)
+void Quad::DrawWithCorners(glm::mat4 view, glm::mat4 proj)
 {
 	GLenum err;
 	if (!privateInit) {
@@ -59,7 +60,7 @@ void Quad::DrawWithThreeCorners(glm::mat4 view, glm::mat4 proj)
 	shader->setMat4("model", model);
 	shader->setMat4("view", view);
 	shader->setMat4("projection", proj);
-	glDrawArrays(GL_TRIANGLES, 0, 3);
+	glDrawArrays(GL_TRIANGLE_STRIP, 0, 4);
 	while ((err = glGetError()) != GL_NO_ERROR) {
 		std::cout << "Error in cube.draw: " << err << std::endl;
 	}
@@ -86,10 +87,11 @@ void Quad::InitializeVao()
 
 void Quad::PrivateInit()
 {
-	float vertices[9]{
-		corner1.x, corner1.y, corner1.z,
+	float vertices[12]{
 		corner2.x, corner2.y, corner2.z,
+		corner1.x, corner1.y, corner1.z,
 		corner3.x, corner3.y, corner3.z,
+		corner4.x, corner4.y, corner4.z
 	};
 	glGenVertexArrays(1, &privateVao);
 	glGenBuffers(1, &privateVbo);

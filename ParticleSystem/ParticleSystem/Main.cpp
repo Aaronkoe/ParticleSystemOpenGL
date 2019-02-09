@@ -39,7 +39,7 @@ float lastY = (float)SCR_HEIGHT / 2.0;
 bool firstMouse = true;
 
 int main() {
-	Quad triangle({ -.2, -.2, -.2 }, { .6, 0, -.2 }, { .6, 0, .6 });
+	Quad triangle({ -.2, -.2, -.2 }, { .6, 0, -.2 }, { .6, 0, .6 }, { -.2, -.2, .6 });
 	CollisionPlane trianglep({ -.2, -.2, -.2 }, { .6, 0, .6 }, { .6, 0, -.2 });
 	Quad floorq, leftWallq, rightWallq, backWallq;
 	camera.MovementSpeed = .1;
@@ -141,8 +141,8 @@ int main() {
 		startTime = glfwGetTime();
 		if (!pause) {
 			timeSinceLastBall += elapsedTime;
-			while (timeSinceLastBall > .00002) {
-				timeSinceLastBall -= .00002;
+			while (timeSinceLastBall > .00005) {
+				timeSinceLastBall -= .00005;
 				particleContainer.AddParticle(0);
 			}
 		}
@@ -211,6 +211,7 @@ unsigned int GenerateTexture()
 	return texture;
 }
 
+#define PI 3.14159f
 Particle RandomParticle(double timeElapsed)
 {
 	float xVelocity = (float)rand() / (RAND_MAX / 2);
@@ -231,10 +232,14 @@ Particle RandomParticle(double timeElapsed)
 	size /= 500;
 	float elast = (float)rand() / RAND_MAX;
 	elast = elast / 10 + .3;
-	float shouldBeWhite = rand() % 100;
-	if (shouldBeWhite == 0) {
-		//return Particle({ 0, .2, 0 }, { xVelocity, yVelocity, zVelocity }, { .9, .9, .9, aVal }, 1.2, elast, size);
-	}
+	bool shouldBeWhite = false;
+	//circle sampling
+	//float t = 2 * PI * (float)rand() / RAND_MAX;
+	//float u = (float)rand() / RAND_MAX + (float)rand() / RAND_MAX;
+	//float r = u > 1 ? 2 - u : u;
+	//float xVelocity = r * cos(t);
+	//float zVelocity = r * sin(t);
+	
 	return Particle({ 0, .2, 0 } , { xVelocity, yVelocity, zVelocity }, { rVal, gVal, bVal, aVal }, 1.8, elast, size);
 }
 

@@ -74,8 +74,8 @@ void ParticleContainer::UpdateTimestep(glm::vec3 cameraPosition, float dt)
 			// update direction then update position
 			particle.lifeSpan -= dt;
 			particle.velocity = particle.velocity + GRAVITY_VECTOR * dt;
-			CheckCollisions(particle);
 			particle.position = particle.position + particle.velocity * dt;
+			CheckCollisions(particle);
 
 			particle.cameraDistance = glm::length(particle.position - cameraPosition);
 			// update position array
@@ -153,9 +153,7 @@ int ParticleContainer::FindUnusedParticle()
 void ParticleContainer::CheckCollisions(Particle & particle)
 {
 	for (CollisionPlane & collidable : collidables) {
-		if (collidable.isColliding(particle)) {
-			particle.velocity = particle.velocity - collidable.GetNormal() * (1 + particle.elasticity) * glm::dot(particle.velocity, collidable.GetNormal());
-		}
+		collidable.HandleCollision(particle);
 	}
 }
 
