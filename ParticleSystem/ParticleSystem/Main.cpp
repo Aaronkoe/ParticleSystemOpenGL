@@ -42,6 +42,7 @@ Camera camera(glm::vec3(0.0f, 0.0f, 3.0f), { 0, 1, 0 }, 270, 0);
 float lastX = (float)SCR_WIDTH / 2.0;
 float lastY = (float)SCR_HEIGHT / 2.0;
 bool firstMouse = true;
+bool resetFirework = false;
 
 int main() {
 	// set up stuff
@@ -102,6 +103,11 @@ int main() {
 		else {
 			elapsedTime = 0;
 		}
+		if (resetFirework) {
+			test = FireWork(.003, 10000, 1000, propellant, explosion, &shader, &shader);
+			test.position = { 0, -3, 0 };
+			resetFirework = false;
+		}
 		startTime = glfwGetTime();
 		test.Update(camera.Position, elapsedTime);
 		test.Draw(view, proj);
@@ -138,6 +144,9 @@ void ProcessInput(GLFWwindow * window)
 
 	if (glfwGetKey(window, GLFW_KEY_X) == GLFW_PRESS) {
 		std::cout << camera.Position.x << " " << camera.Position.y << " " << camera.Position.z << std::endl;
+	}
+	if (glfwGetKey(window, GLFW_KEY_R) == GLFW_PRESS) {
+		resetFirework = true;
 	}
 }
 
