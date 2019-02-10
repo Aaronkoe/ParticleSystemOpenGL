@@ -80,7 +80,7 @@ int main() {
 	// scene setup
 	Cube debug;
 	debug.translation = glm::vec3(0, -5, 0);
-	FireWork test(.01, 10000, 1000, propellant, explosion, &shader, &shader);
+	FireWork test(.003, 10000, 1000, propellant, explosion, &shader, &shader);
 	test.position = glm::vec3(0, -3, 0);
 	Cube::shader = &quadShader;
 	// end scene setup

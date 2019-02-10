@@ -117,7 +117,7 @@ void ParticleContainer::UpdateTimestepSpecial(glm::vec3 cameraPosition, float dt
 		Particle & particle = particleArray[i];
 		if (particle.lifeSpan > 0) {
 			// update direction then update position
-			particle.lifeSpan -= dt;
+			particle.lifeSpan -= 2 * dt * rand() / RAND_MAX;
 			particle.position = particle.position + particle.velocity * dt;
 			CheckCollisions(particle);
 
