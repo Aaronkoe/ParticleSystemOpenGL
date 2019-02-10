@@ -19,6 +19,8 @@
 #include "ParticleContainer.h"
 #include "Quad.h"
 #include "CollisionCube.h"
+#include "Cube.h"
+#include "FireWork.h"
 
 bool pause = true;
 
@@ -31,6 +33,9 @@ GLFWwindow * InitializeWindow(int w, int h);
 unsigned int GenerateTexture();
 void mouse_callback(GLFWwindow * window, double xpos, double ypos);
 Particle RandomParticle(double timeElapsed);
+Particle dummy(glm::vec3 a);
+Particle propellant(glm::vec3 origin);
+Particle explosion(glm::vec3 origin);
 
 // camera global variables
 Camera camera(glm::vec3(0.0f, 0.0f, 3.0f), { 0, 1, 0 }, 270, 0);
@@ -72,8 +77,13 @@ int main() {
 	while ((err = glGetError()) != GL_NO_ERROR) {
 		std::cout << "error in initialize quad vao" << err << std::endl;
 	}
-
-	ParticleContainer particleContainer(MAX_PARTICLES, RandomParticle);
+	// scene setup
+	Cube debug;
+	debug.translation = glm::vec3(0, -5, 0);
+	FireWork test(.01, 10000, 1000, propellant, explosion, &shader, &shader);
+	test.position = glm::vec3(0, -3, 0);
+	Cube::shader = &quadShader;
+	// end scene setup
 	double startTime, elapsedTime;
 	double timeSinceLastBall = 0;
 	int sphereSize;
@@ -81,10 +91,8 @@ int main() {
 	glm::mat4 proj(1.0);
 	glm::mat4 view(1.0);
 	glm::mat4 model(1.0);
-	particleContainer.SetShader(&shader);
-	particleContainer.InitializeVAO();
 	while (!glfwWindowShouldClose(window)) {
-		glClearColor(.1f, .1f, .1f, 1.0f);
+		glClearColor(.2f, .3f, .6f, 1.0f);
 		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 		proj = glm::perspective(glm::radians(camera.Zoom), (float)SCR_WIDTH / (float)SCR_HEIGHT, 0.1f, 100.0f);
 		view = camera.GetViewMatrix();
@@ -95,17 +103,11 @@ int main() {
 			elapsedTime = 0;
 		}
 		startTime = glfwGetTime();
-		if (!pause) {
-			timeSinceLastBall += elapsedTime;
-			while (timeSinceLastBall > .00002) {
-				timeSinceLastBall -= .00002;
-				particleContainer.AddParticle(0);
-			}
-		}
-		std::cout << "elapsed: " << elapsedTime << " numParticles: " << particleContainer.GetNumParticles() << std::endl;
-		particleContainer.UpdateTimestep(camera.Position, elapsedTime);
-		particleContainer.UpdateBuffers();
-		particleContainer.Draw(view, proj);
+		test.Update(camera.Position, elapsedTime);
+		test.Draw(view, proj);
+		debug.Draw(view, proj);
+		test.DrawParticles(view, proj);
+		std::cout << "elapsed: " << elapsedTime << std::endl;
 		glfwSwapBuffers(window);
 		glfwPollEvents();
 		ProcessInput(window);
@@ -199,4 +201,31 @@ void mouse_callback(GLFWwindow* window, double xpos, double ypos)
 	lastY = ypos;
 
 	camera.ProcessMouseMovement(xoffset, yoffset);
+}
+
+
+Particle dummy(glm::vec3 a) {
+	return Particle({ 0, 0, 0 }, { 0, 0, 0 }, { 0, 0, 0, 0 }, 1, 1, 1);
+}
+
+Particle propellant(glm::vec3 origin)
+{
+	float xVelocity = (float)rand() / RAND_MAX;
+	float zVelocity = (float)rand() / RAND_MAX;
+	xVelocity /= 10;
+	zVelocity /= 10;
+	if (rand() % 2 == 0) xVelocity *= -1;
+	if (rand() & 2 == 0) zVelocity *= -1;
+	float yVelocity = -.1;
+	return Particle(origin, { xVelocity, yVelocity, zVelocity }, { .2, .2, .2, .5 }, 3, .1, .02);
+}
+
+Particle explosion(glm::vec3 origin) {
+	// incorrect way
+	float theta = 2 * PI * (float)rand() / RAND_MAX;
+	float phi = acos(1 - 2 * (float)rand() / RAND_MAX);
+	float x = sin(phi) * cos(theta);
+	float y = sin(phi) * sin(theta);
+	float z = cos(phi);
+	return Particle(origin, { x, y, z }, { 1, .2, 1, .5 }, 1, .1, .02);
 }

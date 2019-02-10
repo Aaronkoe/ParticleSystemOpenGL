@@ -17,18 +17,6 @@ void main() {
 	vec3 worldSpace = centerPositionAndSize.xyz + CameraRight_worldspace * baseMesh.x * centerPositionAndSize.w
 		+ CameraUp_worldspace * baseMesh.y * centerPositionAndSize.w;
 	mat4 modelView = view * model;
-	// set rotation part of the view * model to identity, only care about translation
-	//modelView[0][0] = 1;
-	//modelView[0][1] = 0;
-	//modelView[0][2] = 0;
-	//
-	//modelView[1][0] = 0;
-	//modelView[1][1] = 1;
-	//modelView[1][2] = 0;
-	//
-	//modelView[2][0] = 0;
-	//modelView[2][1] = 0;
-	//modelView[2][2] = 1;
 	gl_Position = projection * modelView * vec4(worldSpace.xyz, 1.0);
 	vertexColor = color;
 	TexCoord = vec2(.5, .5) + baseMesh.xy;

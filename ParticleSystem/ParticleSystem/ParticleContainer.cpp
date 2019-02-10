@@ -16,6 +16,15 @@ ParticleContainer::ParticleContainer(unsigned int maxPart, Particle(*randomParti
 	randomParticle = randomParticleFunc;
 }
 
+ParticleContainer::ParticleContainer(unsigned int maxPart, Particle(*randomParticleFunc)(glm::vec3)) :
+	maxParticles(maxPart)
+{
+	particleArray = new Particle[maxParticles];
+	particlePositionArray = new float[4 * maxParticles];
+	particleColorArray = new float[4 * maxParticles];
+	randomParticleOrigin = randomParticleFunc;
+}
+
 void ParticleContainer::InitializeVAO()
 {
 	glGenVertexArrays(1, &VAO);
@@ -50,6 +59,7 @@ void ParticleContainer::UpdateBuffers()
 	glBindBuffer(GL_ARRAY_BUFFER, colorVbo);
 	glBufferData(GL_ARRAY_BUFFER, maxParticles * sizeof(float) * 4, NULL, GL_STREAM_DRAW);
 	glBufferSubData(GL_ARRAY_BUFFER, 0, particlesCount * sizeof(float) * 4, particleColorArray);
+	glBindVertexArray(0);
 }
 void ParticleContainer::Draw(glm::mat4 view, glm::mat4 proj)
 {
@@ -88,8 +98,41 @@ void ParticleContainer::UpdateTimestep(glm::vec3 cameraPosition, float dt)
 			particleColorArray[4 * numParticlesToDraw + 1] = particle.color.g;
 			particleColorArray[4 * numParticlesToDraw + 2] = particle.color.b;
 			particleColorArray[4 * numParticlesToDraw + 3] = particle.color.a;
-			// check for collisions
-			// increment numParticles
+
+			++numParticlesToDraw;
+		}
+		else {
+			particle.cameraDistance = -1.0f;
+		}
+	}
+	particlesCount = numParticlesToDraw;
+}
+
+void ParticleContainer::UpdateTimestepSpecial(glm::vec3 cameraPosition, float dt)
+{
+	SortParticles();
+	unsigned int numParticlesToDraw = 0;
+	for (int i = 0; i < maxParticles; ++i) {
+		// create reference for easy reading
+		Particle & particle = particleArray[i];
+		if (particle.lifeSpan > 0) {
+			// update direction then update position
+			particle.lifeSpan -= dt;
+			particle.position = particle.position + particle.velocity * dt;
+			CheckCollisions(particle);
+
+			particle.cameraDistance = glm::length(particle.position - cameraPosition);
+			// update position array
+			particlePositionArray[4 * numParticlesToDraw + 0] = particle.position.x;
+			particlePositionArray[4 * numParticlesToDraw + 1] = particle.position.y;
+			particlePositionArray[4 * numParticlesToDraw + 2] = particle.position.z;
+			particlePositionArray[4 * numParticlesToDraw + 3] = particle.size;
+
+			particleColorArray[4 * numParticlesToDraw + 0] = particle.color.r * particle.lifeSpan;
+			particleColorArray[4 * numParticlesToDraw + 1] = 1 - particle.lifeSpan;
+			particleColorArray[4 * numParticlesToDraw + 2] = particle.color.b * particle.lifeSpan;
+			particleColorArray[4 * numParticlesToDraw + 3] = particle.color.a;
+
 			++numParticlesToDraw;
 		}
 		else {
@@ -103,6 +146,11 @@ void ParticleContainer::AddParticle(double timeElapsed)
 {
 	Particle newParticle = randomParticle(timeElapsed);
 	AddParticle(newParticle);
+}
+
+void ParticleContainer::AddParticle(glm::vec3 origin)
+{
+	AddParticle(randomParticleOrigin(origin));
 }
 
 void ParticleContainer::AddParticle(Particle p)

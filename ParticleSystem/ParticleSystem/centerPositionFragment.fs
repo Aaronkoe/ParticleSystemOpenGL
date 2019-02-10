@@ -5,5 +5,5 @@ in vec4 vertexColor;
 uniform sampler2D alphaTexture;
 
 void main() {
-	FragColor = vec4(vertexColor.xyz, vertexColor * texture(alphaTexture, TexCoord).r);
+	FragColor = vec4(vertexColor.xyz, vertexColor.a * texture(alphaTexture, TexCoord).r);
 }
