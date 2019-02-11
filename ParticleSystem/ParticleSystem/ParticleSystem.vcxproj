@@ -151,6 +151,7 @@
     <ClCompile Include="Particle.cpp" />
     <ClCompile Include="ParticleContainer.cpp" />
     <ClCompile Include="Quad.cpp" />
+    <ClCompile Include="tiny_obj_loader.cc" />
     <ClCompile Include="Vector.cpp" />
   </ItemGroup>
   <ItemGroup>
@@ -180,6 +181,7 @@
     <ClInclude Include="ParticleContainer.h" />
     <ClInclude Include="Quad.h" />
     <ClInclude Include="SphereFuncs.h" />
+    <ClInclude Include="tiny_obj_loader.h" />
     <ClInclude Include="Vector.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />

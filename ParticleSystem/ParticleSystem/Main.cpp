@@ -1,5 +1,6 @@
 //std
 #include <iostream>
+#include <string>
 
 //project
 #define GLFW_INCLUDE_NONE
@@ -21,6 +22,7 @@
 #include "CollisionCube.h"
 #include "Cube.h"
 #include "FireWork.h"
+#include "tiny_obj_loader.h"
 
 bool pause = true;
 
@@ -79,6 +81,51 @@ int main() {
 		std::cout << "error in initialize quad vao" << err << std::endl;
 	}
 	// scene setup
+	std::string inputFile = "21869_Firework_unexploded_v1.obj";
+	tinyobj::attrib_t attrib;
+	std::vector<tinyobj::shape_t> shapes;
+	std::vector<tinyobj::material_t> materials;
+	std::string warn, error;
+	bool ret = tinyobj::LoadObj(&attrib, &shapes, &materials, &warn, &error, inputFile.c_str());
+	if (!error.empty()) { // `err` may contain warning message.
+		std::cerr << error << std::endl;
+	}
+	if (!ret) {
+		std::cout << "Failed to load obj" << std::endl;
+	}
+	// Loop over shapes
+	std::vector<float> rocketVertices;
+	for (size_t s = 0; s < shapes.size(); s++) {
+		// Loop over faces(polygon)
+		size_t index_offset = 0;
+		for (size_t f = 0; f < shapes[s].mesh.num_face_vertices.size(); f++) {
+			int fv = shapes[s].mesh.num_face_vertices[f];
+
+			// Loop over vertices in the face.
+			for (size_t v = 0; v < fv; v++) {
+				// access to vertex
+				tinyobj::index_t idx = shapes[s].mesh.indices[index_offset + v];
+				tinyobj::real_t vx = attrib.vertices[3 * idx.vertex_index + 0];
+				tinyobj::real_t vy = attrib.vertices[3 * idx.vertex_index + 1];
+				tinyobj::real_t vz = attrib.vertices[3 * idx.vertex_index + 2];
+				rocketVertices.push_back(vx);
+				rocketVertices.push_back(vy);
+				rocketVertices.push_back(vz);
+			}
+			index_offset += fv;
+
+			// per-face material
+			shapes[s].mesh.material_ids[f];
+		}
+	}
+	unsigned int fireworkVao, fireworkVbo;
+	glGenVertexArrays(1, &fireworkVao);
+	glGenBuffers(1, &fireworkVbo);
+	glBindVertexArray(fireworkVao);
+	glBindBuffer(GL_ARRAY_BUFFER, fireworkVbo);
+	glBufferData(GL_ARRAY_BUFFER, rocketVertices.size() * sizeof(float), &rocketVertices[0], GL_STREAM_DRAW);
+	glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 3 * sizeof(float), (void*)0);
+	glEnableVertexAttribArray(0);
 	Cube debug;
 	debug.translation = glm::vec3(0, -5, 0);
 	FireWork test(.003, 10000, 1000, propellant, explosion, &shader, &shader);
@@ -87,7 +134,6 @@ int main() {
 	// end scene setup
 	double startTime, elapsedTime;
 	double timeSinceLastBall = 0;
-	int sphereSize;
 	startTime = glfwGetTime();
 	glm::mat4 proj(1.0);
 	glm::mat4 view(1.0);
@@ -108,12 +154,24 @@ int main() {
 			test.position = { 0, -3, 0 };
 			resetFirework = false;
 		}
+		glBindVertexArray(fireworkVao);
+		quadShader.use();
+		quadShader.setMat4("projection", proj);
+		quadShader.setMat4("view", view);
+		glm::mat4 model(1.0);
+		model = glm::translate(model, test.position - glm::vec3(0, .2, 0));
+		model = glm::rotate(model, 3.14159f / 2, { -1, 0, 0 });
+		model = glm::scale(model, { .1, .1, .1 });
+		quadShader.setMat4("model", model);
+		if (test.timeToExplode > 0) {
+			glDrawArrays(GL_TRIANGLES, 0, rocketVertices.size());
+		}
 		startTime = glfwGetTime();
 		test.Update(camera.Position, elapsedTime);
 		test.Draw(view, proj);
-		debug.Draw(view, proj);
+		//debug.Draw(view, proj);
 		test.DrawParticles(view, proj);
-		std::cout << "elapsed: " << elapsedTime << std::endl;
+		//std::cout << "elapsed: " << elapsedTime << std::endl;
 		glfwSwapBuffers(window);
 		glfwPollEvents();
 		ProcessInput(window);
